@@ -111,11 +111,11 @@ export const initialQueueItems = [
     crop: 'Paddy (Grade A)',
     expectedQty: 30,
     actualQty: 29.8,
-    counter: 'Counter 2',
-    status: 'PROCESSING',
+    counter: 'Counter 1',
+    status: 'COMPLETED',
     arrivalTime: '09:40 AM',
-    completedTime: null,
-    paymentStatus: 'PENDING'
+    completedTime: '10:45 AM',
+    paymentStatus: 'DISBURSED'
   },
   {
     token: 'SNP-013',
