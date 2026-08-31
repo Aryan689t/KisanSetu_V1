@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDemo } from '../../context/DemoContext';
-import { ShieldCheck, CheckCircle2, Calculator, ArrowRight, Building, Play } from 'lucide-react';
+import { ShieldCheck, CheckCircle2, Calculator, Building, Play, ArrowRight, Clock, FileCheck } from 'lucide-react';
 import { StatusBadge } from '../ui/StatusBadge';
 
 export const PaymentSettlement = () => {
@@ -12,40 +12,48 @@ export const PaymentSettlement = () => {
   );
 
   return (
-    <div className="paper-surface rounded-2xl border border-agri-ivory-muted shadow-agri-sm overflow-hidden">
+    <div className="paper-surface rounded-2xl border border-agri-ivory-muted shadow-agri-sm overflow-hidden space-y-0">
       
-      <div className="p-4 bg-agri-green-dark text-white flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-        <div className="flex items-center space-x-2">
-          <ShieldCheck className="w-5 h-5 text-agri-gold" />
-          <h3 className="font-heading font-bold text-sm">
-            Direct Benefit Transfer (DBT) MSP Disbursal Management
-          </h3>
+      {/* Header Banner */}
+      <div className="p-4 bg-agri-green-dark text-white flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-agri-green/30">
+        <div className="flex items-center space-x-2.5">
+          <ShieldCheck className="w-5 h-5 text-agri-gold shrink-0" />
+          <div>
+            <h3 className="font-heading font-bold text-base text-white">
+              Pending Settlements & Direct Benefit Transfer (DBT) Audit Trail
+            </h3>
+            <p className="text-xs text-agri-ivory/80">
+              Supervisory tracking & MSP payout settlement authorization across state procurement yards
+            </p>
+          </div>
         </div>
         <span className="text-[10px] text-agri-gold font-mono uppercase tracking-wider bg-agri-green/60 px-2.5 py-1 rounded border border-agri-gold/30">
-          Public Financial Management System (PFMS) Sync
+          PFMS & National Mandi Grid Sync
         </span>
       </div>
 
-      <div className="p-4 bg-agri-gold-light/20 border-b border-agri-gold/30 text-xs text-agri-text flex items-center justify-between">
+      {/* Verification Formula Standard Bar */}
+      <div className="p-3.5 bg-agri-gold-light/20 border-b border-agri-gold/30 text-xs text-agri-text flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div className="flex items-center space-x-2">
           <Calculator className="w-4 h-4 text-agri-gold-dark shrink-0" />
           <span>
-            <strong>Required Standard:</strong> All payment releases must verify net weighment formula (`Quintals × MSP Rate = Total`).
+            <strong>Required Audit Standard:</strong> Settlement authorization requires verified net weighment formula (<code className="font-mono bg-agri-gold/10 px-1 py-0.5 rounded text-agri-green-dark font-bold">Quintals × MSP Rate = Total Payout</code>).
           </span>
         </div>
       </div>
 
+      {/* Settlements Table */}
       <div className="overflow-x-auto">
         <table className="w-full text-left text-xs">
           <thead className="bg-agri-ivory border-b border-agri-ivory-muted uppercase text-[10px] text-agri-text-muted font-heading tracking-wider">
             <tr>
               <th className="py-3 px-4">Token / Farmer</th>
               <th className="py-3 px-4">Mandi Station</th>
-              <th className="py-3 px-4">Inspection Result</th>
-              <th className="py-3 px-4">Verified Payout Calculation</th>
+              <th className="py-3 px-4">Quality & Moisture</th>
+              <th className="py-3 px-4">Verified Payout Formula</th>
               <th className="py-3 px-4">Bank DBT Account</th>
-              <th className="py-3 px-4">Status</th>
-              <th className="py-3 px-4 text-right">Disbursal Control</th>
+              <th className="py-3 px-4">Settlement Status</th>
+              <th className="py-3 px-4 text-right">Supervisory Action</th>
             </tr>
           </thead>
 
@@ -75,13 +83,13 @@ export const PaymentSettlement = () => {
                     </div>
                   </td>
 
-                  {/* Mandi */}
+                  {/* Mandi Station */}
                   <td className="py-3.5 px-4 text-agri-text-muted">
                     <strong className="text-agri-text block">Sonipat Yard</strong>
                     Counter 2
                   </td>
 
-                  {/* Inspection */}
+                  {/* Quality & Moisture Inspection */}
                   <td className="py-3.5 px-4">
                     <div className="font-bold text-agri-text">
                       {item.qualityGrade || 'Grade A'}
@@ -91,7 +99,7 @@ export const PaymentSettlement = () => {
                     </span>
                   </td>
 
-                  {/* Formula */}
+                  {/* Formula Calculation */}
                   <td className="py-3.5 px-4">
                     <div className="font-mono font-bold text-agri-green">
                       {qty} qtl × ₹{rate.toLocaleString()} = ₹{totalAmount.toLocaleString()}
@@ -105,7 +113,7 @@ export const PaymentSettlement = () => {
                       <Building className="w-3.5 h-3.5 text-agri-green" />
                       <span>SBI ****4092</span>
                     </div>
-                    <span className="text-[10px] text-agri-text-muted">Direct Benefit Transfer</span>
+                    <span className="text-[10px] text-agri-text-muted">Aadhaar Linked DBT</span>
                   </td>
 
                   {/* Status */}
@@ -113,20 +121,21 @@ export const PaymentSettlement = () => {
                     <StatusBadge status={item.paymentStatus} type="payment" />
                   </td>
 
-                  {/* Action */}
+                  {/* Supervisory Action Button */}
                   <td className="py-3.5 px-4 text-right">
                     {!isDisbursed ? (
                       <button
                         onClick={() => disbursePayment(item.token)}
-                        className="bg-agri-green hover:bg-agri-green-dark text-white font-extrabold px-3 py-1.5 rounded-lg text-[11px] inline-flex items-center space-x-1.5 transition-all shadow-agri-sm"
+                        className="bg-agri-green hover:bg-agri-green-dark text-white font-bold px-3 py-1.5 rounded-lg text-[11px] inline-flex items-center space-x-1.5 transition-all shadow-agri-sm hover:scale-[1.02]"
+                        title="Authorize payout settlement for this completed procurement"
                       >
-                        <Play className="w-3 h-3 text-agri-gold fill-agri-gold" />
-                        <span>Disburse ₹{totalAmount.toLocaleString()}</span>
+                        <FileCheck className="w-3.5 h-3.5 text-agri-gold" />
+                        <span>Authorize Settlement</span>
                       </button>
                     ) : (
-                      <span className="text-agri-status-success font-bold text-[11px] inline-flex items-center space-x-1">
+                      <span className="text-agri-status-success font-bold text-[11px] inline-flex items-center space-x-1 bg-agri-green-soft px-2.5 py-1 rounded border border-agri-green-border">
                         <CheckCircle2 className="w-3.5 h-3.5" />
-                        <span>Disbursed via DBT</span>
+                        <span>Settlement Authorized & Disbursed</span>
                       </span>
                     )}
                   </td>
@@ -136,6 +145,55 @@ export const PaymentSettlement = () => {
             })}
           </tbody>
         </table>
+      </div>
+
+      {/* Payment Audit Trail Lifecycle Visualizer */}
+      <div className="p-4 bg-agri-ivory/40 border-t border-agri-ivory-muted space-y-3">
+        <h4 className="font-heading text-xs font-bold text-agri-text uppercase tracking-wider">
+          Supervisory Payment Audit Trail Lifecycle
+        </h4>
+
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-2 text-xs">
+          <div className="p-2.5 bg-[#FFFDF7] rounded-lg border border-agri-ivory-muted flex items-center space-x-2">
+            <div className="w-6 h-6 rounded-full bg-agri-green text-white font-bold text-xs flex items-center justify-center shrink-0">
+              1
+            </div>
+            <div>
+              <strong className="block text-agri-text text-[11px]">Procurement Weighment</strong>
+              <span className="text-[10px] text-agri-text-muted">Operator completes weight & moisture test</span>
+            </div>
+          </div>
+
+          <div className="p-2.5 bg-[#FFFDF7] rounded-lg border border-agri-ivory-muted flex items-center space-x-2">
+            <div className="w-6 h-6 rounded-full bg-agri-gold-dark text-white font-bold text-xs flex items-center justify-center shrink-0">
+              2
+            </div>
+            <div>
+              <strong className="block text-agri-text text-[11px]">Settlement Pending</strong>
+              <span className="text-[10px] text-agri-text-muted">Net formula auto-verified against MSP</span>
+            </div>
+          </div>
+
+          <div className="p-2.5 bg-[#FFFDF7] rounded-lg border border-agri-ivory-muted flex items-center space-x-2">
+            <div className="w-6 h-6 rounded-full bg-agri-green text-white font-bold text-xs flex items-center justify-center shrink-0">
+              3
+            </div>
+            <div>
+              <strong className="block text-agri-text text-[11px]">DoCA Authorization</strong>
+              <span className="text-[10px] text-agri-text-muted">Admin authorizes payout release</span>
+            </div>
+          </div>
+
+          <div className="p-2.5 bg-[#FFFDF7] rounded-lg border border-agri-ivory-muted flex items-center space-x-2">
+            <div className="w-6 h-6 rounded-full bg-agri-status-success text-white font-bold text-xs flex items-center justify-center shrink-0">
+              4
+            </div>
+            <div>
+              <strong className="block text-agri-text text-[11px]">DBT Account Credit</strong>
+              <span className="text-[10px] text-agri-text-muted">PFMS transfers MSP directly to bank</span>
+            </div>
+          </div>
+        </div>
       </div>
 
     </div>
