@@ -1,24 +1,109 @@
 import React, { useState } from 'react';
 import { useDemo } from '../../context/DemoContext';
-import { Wheat, Calendar, MapPin, Clock, ArrowRight, CheckCircle2, AlertCircle, ShieldCheck, UserCheck, AlertTriangle, Building, Calculator } from 'lucide-react';
+import { Wheat, Calendar, MapPin, Clock, ArrowRight, CheckCircle2, AlertCircle, ShieldCheck, UserCheck, AlertTriangle, Building, Navigation, HelpCircle } from 'lucide-react';
 import { TokenDisplay } from '../ui/TokenDisplay';
 import { MetricCard } from '../ui/MetricCard';
 import { SlotBookingModal } from './SlotBookingModal';
 
 export const FarmerDashboard = () => {
-  const { activeBooking, setFarmerTab, centres } = useDemo();
+  const {
+    activeBooking,
+    setFarmerTab,
+    centres,
+    getRecommendedCentre,
+    switchBookingCentre,
+    dismissedRerouteAlert,
+    setDismissedRerouteAlert
+  } = useDemo();
+
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [selectedCentreForBooking, setSelectedCentreForBooking] = useState(null);
+  const [showWhyRecommended, setShowWhyRecommended] = useState(false);
 
-  const recommendedCentre = centres.find(c => c.recommended) || centres[0];
+  // Derived booked centre vs recommended centre
+  const bookedCentre = centres.find(c => c.id === activeBooking?.centreId) || centres[0];
+  const recommendedCentre = getRecommendedCentre(centres);
+
+  const isBookedCentreCongested = bookedCentre.status === 'CONGESTED' || bookedCentre.capacityPercent > 85;
+  const isAlternativeBetter = recommendedCentre.id !== bookedCentre.id;
+  
   const isCompleted = activeBooking?.status === 'COMPLETED';
   const isDisbursed = activeBooking?.paymentStatus === 'DISBURSED';
   const isProcessing = activeBooking?.status === 'PROCESSING';
   const isCheckedIn = activeBooking?.status === 'CHECKED_IN';
 
+  // Congestion alert condition
+  const shouldShowRerouteWarning = isBookedCentreCongested && isAlternativeBetter && !dismissedRerouteAlert && !isCompleted && !isDisbursed;
+
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
       
+      {/* DYNAMIC CONGESTION REROUTING ALERT (Shown ONLY when booked centre is congested and alert is not dismissed) */}
+      {shouldShowRerouteWarning && (
+        <div className="bg-rose-900 text-white rounded-2xl p-5 sm:p-6 shadow-agri-lg border-2 border-rose-400 relative overflow-hidden animate-in slide-in-from-top duration-300">
+          <div className="space-y-4">
+            
+            {/* Header & Warning Text */}
+            <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
+              <div className="flex items-start space-x-3.5">
+                <div className="p-3 bg-rose-800 text-amber-300 rounded-xl shrink-0 border border-rose-600">
+                  <AlertTriangle className="w-6 h-6 animate-pulse" />
+                </div>
+                <div className="space-y-1">
+                  <div className="flex items-center space-x-2">
+                    <span className="text-[10px] font-extrabold uppercase bg-amber-400 text-rose-950 px-2.5 py-0.5 rounded font-mono">
+                      ⚠️ CONGESTION WARNING
+                    </span>
+                    <span className="text-xs text-rose-200">Conditions changed at your booked centre</span>
+                  </div>
+
+                  <h3 className="font-heading text-lg font-bold text-white">
+                    {bookedCentre.name} is experiencing congestion
+                  </h3>
+
+                  <p className="text-xs text-rose-100/90 leading-relaxed">
+                    Estimated waiting time at {bookedCentre.name} has increased to <strong className="text-amber-300 font-mono text-sm">~{bookedCentre.estWaitMinutes} min</strong> due to incoming truck backlog. We found a faster alternative nearby.
+                  </p>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex items-center space-x-2.5 shrink-0 pt-2 md:pt-0">
+                <button
+                  onClick={() => switchBookingCentre(recommendedCentre.id)}
+                  className="bg-amber-400 hover:bg-amber-300 text-rose-950 font-extrabold text-xs px-4 py-2.5 rounded-xl shadow-md transition-all flex items-center space-x-1.5 hover:scale-[1.02]"
+                >
+                  <span>Switch to {recommendedCentre.name.split(' ')[0]} (~{recommendedCentre.estWaitMinutes} min)</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+
+                <button
+                  onClick={() => setDismissedRerouteAlert(true)}
+                  className="bg-rose-800 hover:bg-rose-700 text-rose-200 text-xs font-semibold px-3.5 py-2.5 rounded-xl transition-colors border border-rose-600"
+                >
+                  Keep {bookedCentre.name.split(' ')[0]}
+                </button>
+              </div>
+            </div>
+
+            {/* Recommended Alternative Card Preview */}
+            <div className="bg-rose-950/60 p-3.5 rounded-xl border border-rose-700/60 flex flex-wrap items-center justify-between gap-3 text-xs">
+              <div className="flex items-center space-x-3">
+                <span className="text-agri-gold font-bold">Recommended Alternative:</span>
+                <span className="font-bold text-white">{recommendedCentre.name}</span>
+              </div>
+              <div className="flex items-center space-x-4 text-rose-200 font-mono text-[11px]">
+                <span>Wait: <strong className="text-amber-300">~{recommendedCentre.estWaitMinutes} min</strong></span>
+                <span>Capacity: <strong>{recommendedCentre.capacityPercent}%</strong></span>
+                <span>Open Slots: <strong>{recommendedCentre.availableSlots} free</strong></span>
+                <span>Distance: <strong>{recommendedCentre.distanceKm} km</strong></span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      )}
+
       {/* 1. Hero Section — "What Do I Do Now?" */}
       <div className="bg-gradient-to-r from-agri-green-dark via-agri-green to-agri-green-dark text-white rounded-2xl p-6 sm:p-8 shadow-agri-md relative overflow-hidden">
         <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-field-pattern opacity-10 pointer-events-none"></div>
@@ -35,7 +120,7 @@ export const FarmerDashboard = () => {
               Namaste, Ramesh Singh ji 🙏
             </h1>
             <p className="text-xs sm:text-sm text-agri-ivory/90 mt-1 font-sans">
-              Your procurement appointment is active at <strong className="text-agri-gold">{activeBooking?.centreName || 'Sonipat Main Procurement Centre'}</strong>.
+              Your procurement appointment is active at <strong className="text-agri-gold">{bookedCentre.name}</strong>.
             </p>
           </div>
 
@@ -52,7 +137,7 @@ export const FarmerDashboard = () => {
                       Next Step: Wait for your token call
                     </strong>
                     <p className="text-xs text-amber-100/90 mt-0.5">
-                      You are <strong>3 farmers away</strong> from your turn (~24 min est. wait). Please stay near Sonipat Mandi yard.
+                      You are <strong>3 farmers away</strong> from your turn (~{bookedCentre.estWaitMinutes} min est. wait at {bookedCentre.name.split(' ')[0]}). Please stay near Mandi yard.
                     </p>
                   </div>
                 </div>
@@ -77,7 +162,7 @@ export const FarmerDashboard = () => {
                       Next Step: Gate Check-in Completed
                     </strong>
                     <p className="text-xs text-blue-100/90 mt-0.5">
-                      Gate check-in verified. Please wait near <strong>Counter 2</strong>. You will be called shortly.
+                      Gate check-in verified. Please wait near <strong>Counter 2</strong> at {bookedCentre.name.split(' ')[0]} Mandi.
                     </p>
                   </div>
                 </div>
@@ -117,7 +202,7 @@ export const FarmerDashboard = () => {
               </div>
             )}
 
-            {/* COMPLETED State (Pending Disbursal) */}
+            {/* COMPLETED State */}
             {isCompleted && !isDisbursed && (
               <div className="bg-agri-green-soft/30 border-agri-green-border p-4 rounded-xl text-white flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div className="flex items-start space-x-3">
@@ -199,7 +284,7 @@ export const FarmerDashboard = () => {
         <MetricCard
           title="Active Token"
           value={activeBooking?.token || 'SNP-014'}
-          subtitle={activeBooking?.centreName || 'Sonipat Mandi'}
+          subtitle={bookedCentre.name.split(' ')[0] + ' Mandi'}
           icon={Wheat}
           highlight={true}
           badgeText={activeBooking?.status}
@@ -207,15 +292,15 @@ export const FarmerDashboard = () => {
         <MetricCard
           title="Queue Position"
           value={isCompleted ? '0 Farmers' : '3 Farmers Ahead'}
-          subtitle={isCompleted ? 'Procurement Logged' : 'Estimated wait: ~24 min'}
+          subtitle={isCompleted ? 'Procurement Logged' : `Estimated wait: ~${bookedCentre.estWaitMinutes} min`}
           icon={Clock}
         />
         <MetricCard
-          title="Nearest Mandi"
-          value="Sonipat Centre"
-          subtitle="6.2 km • 58% Capacity"
+          title="Booked Mandi"
+          value={bookedCentre.name.split(' ')[0]}
+          subtitle={`${bookedCentre.distanceKm} km • ${bookedCentre.capacityPercent}% Capacity`}
           icon={MapPin}
-          badgeText="Recommended"
+          badgeText="Booked"
         />
         <MetricCard
           title="Target Payout Rate"
@@ -225,7 +310,7 @@ export const FarmerDashboard = () => {
         />
       </div>
 
-      {/* 3. Main Grid: Active Token Pass + Harvest Journey & Smart Mandi */}
+      {/* 3. Main Grid: Active Token Pass + Smart Recommendation & Journey */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
         
         {/* Active Token Pass Card (Takes 1 Col on Desktop) */}
@@ -240,9 +325,108 @@ export const FarmerDashboard = () => {
           />
         </div>
 
-        {/* Harvest Journey Progress & Recommended Mandi (Takes 2 Cols) */}
+        {/* Smart Recommendation & Harvest Journey (Takes 2 Cols) */}
         <div className="lg:col-span-2 space-y-6">
           
+          {/* FEATURE HERO: Best Procurement Centre For You (Derived from live telemetry) */}
+          <div className="paper-surface rounded-2xl p-6 border-2 border-agri-green/30 relative shadow-agri-md space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-agri-ivory-muted">
+              <div>
+                <div className="flex items-center space-x-2 flex-wrap gap-y-1 mb-1">
+                  <span className="text-[10px] uppercase font-bold text-agri-gold bg-agri-gold-light/40 px-2.5 py-0.5 rounded-full border border-agri-gold/40">
+                    ⭐ SMART TELEMETRY RECOMMENDATION
+                  </span>
+
+                  {recommendedCentre.id !== bookedCentre.id && (
+                    <span className="text-[10px] uppercase font-bold text-agri-text bg-agri-ivory px-2.5 py-0.5 rounded-full border border-agri-ivory-muted">
+                      Your Booking: {bookedCentre.name.split(' ')[0]}
+                    </span>
+                  )}
+                </div>
+                
+                <h3 className="font-heading text-xl font-bold text-agri-green flex items-center gap-2">
+                  <span>Best Centre For You:</span>
+                  <span className="text-agri-text underline font-extrabold">{recommendedCentre.name}</span>
+                </h3>
+
+                <p className="text-xs text-agri-text-muted flex items-center space-x-1 mt-0.5">
+                  <MapPin className="w-3.5 h-3.5 text-agri-green shrink-0" />
+                  <span>{recommendedCentre.address} • <strong>{recommendedCentre.distanceKm} km away</strong></span>
+                </p>
+              </div>
+
+              {/* Get Directions Action */}
+              <a
+                href={`https://www.google.com/maps/dir/?api=1&destination=${recommendedCentre.lat},${recommendedCentre.lng}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-agri-green hover:bg-agri-green-dark text-white px-3.5 py-2 rounded-xl text-xs font-extrabold inline-flex items-center space-x-1.5 shrink-0 transition-all shadow-agri-sm hover:scale-[1.02]"
+              >
+                <Navigation className="w-4 h-4 text-agri-gold" />
+                <span>📍 Get Directions</span>
+              </a>
+            </div>
+
+            {/* Metrics Breakdown */}
+            <div className="grid grid-cols-3 gap-3 text-center py-2.5 bg-agri-ivory/60 rounded-xl border border-agri-ivory-muted">
+              <div>
+                <span className="text-[10px] text-agri-text-muted uppercase font-bold block font-sans">Queue Wait</span>
+                <p className="font-heading text-lg font-bold text-agri-gold-dark font-mono mt-0.5">~{recommendedCentre.estWaitMinutes} min</p>
+              </div>
+              <div>
+                <span className="text-[10px] text-agri-text-muted uppercase font-bold block font-sans">Yard Capacity</span>
+                <p className="font-heading text-base font-bold text-agri-green font-mono mt-0.5">{recommendedCentre.capacityPercent}% Loaded</p>
+              </div>
+              <div>
+                <span className="text-[10px] text-agri-text-muted uppercase font-bold block font-sans">Open Slots</span>
+                <p className="font-heading text-base font-bold text-agri-text font-mono mt-0.5">{recommendedCentre.availableSlots} Open</p>
+              </div>
+            </div>
+
+            {/* Interactive "Why Recommended?" Explanation */}
+            <div className="pt-1">
+              <button
+                onClick={() => setShowWhyRecommended(!showWhyRecommended)}
+                className="text-xs font-bold text-agri-green hover:text-agri-green-dark inline-flex items-center space-x-1.5"
+              >
+                <HelpCircle className="w-4 h-4 text-agri-gold" />
+                <span>Why is this recommended?</span>
+                <span className="text-[10px] text-agri-text-muted">({showWhyRecommended ? 'Hide explanation' : 'Click to view reason'})</span>
+              </button>
+
+              {showWhyRecommended && (
+                <div className="mt-3 p-3.5 bg-agri-ivory/80 rounded-xl border border-agri-ivory-muted text-xs text-agri-text space-y-2 animate-in fade-in duration-200">
+                  <strong className="font-bold text-agri-green-dark block font-heading">
+                    Telemetry Load Recommendation Criteria:
+                  </strong>
+                  <ul className="space-y-1 text-agri-text-muted list-disc list-inside">
+                    <li><strong>Estimated Wait Time:</strong> ~{recommendedCentre.estWaitMinutes} min wait vs ~{bookedCentre.estWaitMinutes} min at {bookedCentre.name.split(' ')[0]}.</li>
+                    <li><strong>Yard Capacity:</strong> Operating at {recommendedCentre.capacityPercent}% load threshold.</li>
+                    <li><strong>Available Slots:</strong> {recommendedCentre.availableSlots} arrival slots free today.</li>
+                    <li><strong>Active Counters:</strong> {recommendedCentre.activeCounters} weighbridges actively processing arrivals.</li>
+                  </ul>
+                </div>
+              )}
+            </div>
+
+            {/* Card Footer Actions */}
+            <div className="pt-3 border-t border-agri-ivory-muted flex items-center justify-between">
+              <p className="text-xs text-agri-text-muted italic flex items-center space-x-1">
+                <CheckCircle2 className="w-3.5 h-3.5 text-agri-green shrink-0" />
+                <span>{recommendedCentre.recommendationReason}</span>
+              </p>
+
+              <button
+                onClick={() => setFarmerTab('centres')}
+                className="text-xs font-bold text-agri-green hover:text-agri-green-dark flex items-center space-x-1 shrink-0"
+              >
+                <span>Compare All Mandis</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+
+          </div>
+
           {/* Harvest Journey Progress Timeline */}
           <div className="paper-surface rounded-2xl p-6 border border-agri-ivory-muted shadow-agri-sm space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-agri-ivory-muted">
@@ -268,7 +452,7 @@ export const FarmerDashboard = () => {
                   ✓
                 </div>
                 <span className="font-bold text-agri-green-dark block">1. Slot Booked</span>
-                <span className="text-[10px] text-agri-text-muted">11:00 - 11:30 AM</span>
+                <span className="text-[10px] text-agri-text-muted">{activeBooking?.slotTime || '11:00 - 11:30 AM'}</span>
               </div>
 
               {/* Step 2: Gate Check-in */}
@@ -332,69 +516,6 @@ export const FarmerDashboard = () => {
 
             </div>
 
-            {/* Explanatory Banner */}
-            <div className="p-3 bg-agri-ivory/60 rounded-xl border border-agri-ivory-muted text-xs text-agri-text flex items-center space-x-2">
-              <AlertCircle className="w-4 h-4 text-agri-gold shrink-0" />
-              <span>
-                <strong>How it works:</strong> As your procurement progresses at Sonipat Mandi, each stage updates automatically on this dashboard and triggers an instant SMS notification.
-              </span>
-            </div>
-
-          </div>
-
-          {/* Smart Recommended Mandi Banner */}
-          <div className="paper-surface rounded-2xl p-6 border-2 border-agri-green/20 relative shadow-agri-sm space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-agri-ivory-muted">
-              <div>
-                <span className="text-[10px] uppercase font-bold text-agri-gold bg-agri-gold-light/40 px-2.5 py-1 rounded-full border border-agri-gold/40 inline-block mb-1">
-                  ⭐ RECOMMENDED FOR YOU TODAY
-                </span>
-                <h3 className="font-heading text-xl font-bold text-agri-green">
-                  {recommendedCentre.name}
-                </h3>
-                <p className="text-xs text-agri-text-muted flex items-center space-x-1 mt-0.5">
-                  <MapPin className="w-3.5 h-3.5 text-agri-green shrink-0" />
-                  <span>{recommendedCentre.address} • {recommendedCentre.distanceKm} km away</span>
-                </p>
-              </div>
-
-              <div className="text-left sm:text-right bg-agri-ivory/60 p-2.5 rounded-xl border border-agri-ivory-muted">
-                <span className="text-2xl font-bold font-heading text-agri-green block font-mono">
-                  ~{recommendedCentre.estWaitMinutes} min
-                </span>
-                <p className="text-[10px] text-agri-text-muted font-medium">Avg. Queue Wait Time</p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-3 gap-3 text-center py-2 bg-agri-ivory/40 rounded-xl border border-agri-ivory-muted">
-              <div>
-                <span className="text-[10px] text-agri-text-muted uppercase font-bold block">Current Queue</span>
-                <p className="font-heading text-base font-bold text-agri-text font-mono">{recommendedCentre.queueCount} Farmers</p>
-              </div>
-              <div>
-                <span className="text-[10px] text-agri-text-muted uppercase font-bold block font-sans">Yard Capacity</span>
-                <p className="font-heading text-base font-bold text-agri-green font-mono">{recommendedCentre.capacityPercent}%</p>
-              </div>
-              <div>
-                <span className="text-[10px] text-agri-text-muted uppercase font-bold block font-sans">Open Slots</span>
-                <p className="font-heading text-base font-bold text-agri-gold-dark font-mono">{recommendedCentre.availableSlots} Open</p>
-              </div>
-            </div>
-
-            <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-              <p className="text-xs text-agri-text-muted italic flex items-center space-x-1.5">
-                <CheckCircle2 className="w-4 h-4 text-agri-green shrink-0" />
-                <span><strong>Recommendation Reason:</strong> {recommendedCentre.recommendationReason}</span>
-              </p>
-
-              <button
-                onClick={() => setFarmerTab('centres')}
-                className="text-xs font-bold text-agri-green hover:text-agri-green-dark flex items-center space-x-1 shrink-0"
-              >
-                <span>Compare All Mandis</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
           </div>
 
         </div>

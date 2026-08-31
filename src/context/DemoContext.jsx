@@ -23,6 +23,12 @@ export const DemoProvider = ({ children }) => {
   const [pastHistory, setPastHistory] = useState(initialPastHistory);
   const [notifications, setNotifications] = useState(initialNotifications);
 
+  // Dynamic Congestion Demo Condition ('NORMAL' | 'CONGESTED_SONIPAT')
+  const [demoCondition, setDemoConditionState] = useState('NORMAL');
+  
+  // Alert Dismissal State
+  const [dismissedRerouteAlert, setDismissedRerouteAlert] = useState(false);
+
   // Active Selected Booking (Ramesh Singh's Token SNP-014 by default)
   const activeBooking = queueItems.find(q => q.token === 'SNP-014') || queueItems[3];
 
@@ -43,6 +49,100 @@ export const DemoProvider = ({ children }) => {
   // Mark all notifications as read
   const markNotificationsRead = () => {
     setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+  };
+
+  // Compute recommended centre dynamically based on live telemetry load score
+  const getRecommendedCentre = (centresList = centres) => {
+    if (!centresList || centresList.length === 0) return initialCentres[0];
+    
+    // Score calculation: lower wait, lower capacity load, more slots, active counters -> better (lower) score
+    const scored = centresList.map(c => {
+      const score = (c.estWaitMinutes * 0.4) + (c.capacityPercent * 0.4) - (c.availableSlots * 0.5) - (c.activeCounters * 1.5) + (c.distanceKm * 0.2);
+      return { ...c, score };
+    });
+
+    scored.sort((a, b) => a.score - b.score);
+    return scored[0];
+  };
+
+  // Toggle or Set Demo Condition (Normal vs Congested Sonipat)
+  // NOTE: Modifies ONLY live centres telemetry. Does NOT automatically change farmer booking!
+  const setDemoCondition = (condition) => {
+    setDemoConditionState(condition);
+    setDismissedRerouteAlert(false); // Reset alert dismissal on scenario change
+
+    if (condition === 'CONGESTED_SONIPAT') {
+      setCentres(prev => prev.map(c => {
+        if (c.id === 'cnt-sonipat') {
+          return {
+            ...c,
+            queueCount: 34,
+            estWaitMinutes: 67,
+            capacityPercent: 94,
+            status: 'CONGESTED',
+            recommended: false,
+            recommendationReason: 'Heavy truck backlog (~67 min wait).'
+          };
+        }
+        if (c.id === 'cnt-panipat') {
+          return {
+            ...c,
+            queueCount: 14,
+            estWaitMinutes: 31,
+            capacityPercent: 62,
+            availableSlots: 11,
+            status: 'NORMAL',
+            recommended: true,
+            recommendationReason: 'Optimal queue clearance & available capacity (~31 min wait).'
+          };
+        }
+        return c;
+      }));
+
+      addNotification(
+        '⚠️ Mandi Congestion Alert',
+        'Sonipat Main Yard is experiencing heavy truck backlog (~67 min wait). Panipat Mandi (~31 min wait) is currently recommended.',
+        'warning',
+        'farmer'
+      );
+    } else {
+      // Normal state
+      setCentres(initialCentres);
+      addNotification(
+        'Mandi Telemetry Restored',
+        'Restored normal yard capacity telemetry across state mandis.',
+        'info',
+        'farmer'
+      );
+    }
+  };
+
+  // Switch Booking Centre (Invoked ONLY when farmer explicitly clicks switch button)
+  const switchBookingCentre = (newCentreId) => {
+    const targetCentre = centres.find(c => c.id === newCentreId);
+    if (!targetCentre) return;
+
+    setQueueItems(prev => prev.map(item => {
+      if (item.token === 'SNP-014') {
+        return {
+          ...item,
+          centreId: targetCentre.id,
+          centreName: targetCentre.name,
+          counter: 'Counter 1 (Assigned)',
+          slotTime: '11:30 AM - 12:00 PM'
+        };
+      }
+      return item;
+    }));
+
+    setDismissedRerouteAlert(true);
+
+    addNotification(
+      'Mandi Rerouted Successfully!',
+      `Token SNP-014 switched to ${targetCentre.name}. Estimated wait time reduced to ~${targetCentre.estWaitMinutes} mins.`,
+      'success',
+      'farmer'
+    );
   };
 
   // Action 1: Book New Slot (Farmer)
@@ -73,7 +173,6 @@ export const DemoProvider = ({ children }) => {
 
     setQueueItems(prev => [...prev, newBooking]);
 
-    // Update centre slots
     setCentres(prev => prev.map(c => {
       if (c.id === centreId) {
         return {
@@ -169,7 +268,6 @@ export const DemoProvider = ({ children }) => {
       return item;
     }));
 
-    // Add to past history list
     const newHistoryItem = {
       id: `HIST-2026-${Math.floor(10 + Math.random() * 90)}`,
       season: 'Kharif 2026',
@@ -254,7 +352,9 @@ export const DemoProvider = ({ children }) => {
     setPastHistory(initialPastHistory);
     setNotifications(initialNotifications);
     setFarmerTab('dashboard');
-    addNotification('Demo State Reset', 'Restored initial mock dataset.', 'info', activeRole);
+    setDemoConditionState('NORMAL');
+    setDismissedRerouteAlert(false);
+    addNotification('Demo State Reset', 'Restored initial mock dataset & normal load conditions.', 'info', activeRole);
   };
 
   return (
@@ -271,6 +371,12 @@ export const DemoProvider = ({ children }) => {
         pastHistory,
         notifications,
         activeBooking,
+        demoCondition,
+        setDemoCondition,
+        dismissedRerouteAlert,
+        setDismissedRerouteAlert,
+        getRecommendedCentre,
+        switchBookingCentre,
         bookSlot,
         checkInFarmer,
         callNextFarmer,

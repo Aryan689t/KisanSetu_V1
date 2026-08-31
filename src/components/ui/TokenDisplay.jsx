@@ -1,13 +1,15 @@
 import React from 'react';
-import { Wheat, MapPin, Clock, CheckCircle2, ShieldCheck, ArrowRight, UserCheck, AlertTriangle } from 'lucide-react';
+import { Wheat, MapPin, Clock, CheckCircle2, Navigation, ArrowRight } from 'lucide-react';
 import { StatusBadge } from './StatusBadge';
+import { useDemo } from '../../context/DemoContext';
 
 export const TokenDisplay = ({ booking, onLiveQueueClick }) => {
+  const { centres } = useDemo();
   if (!booking) return null;
 
-  const isYou = booking.token === 'SNP-014';
-  const isCompleted = booking.status === 'COMPLETED';
-  const isDisbursed = booking.paymentStatus === 'DISBURSED';
+  // Find target centre details for GPS navigation
+  const currentCentre = centres.find(c => c.id === booking.centreId) || centres.find(c => c.name === booking.centreName) || centres[0];
+  const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${currentCentre.lat || 28.9931},${currentCentre.lng || 77.0151}`;
 
   return (
     <div className="bg-[#FFFDF7] rounded-2xl border-2 border-agri-green/30 p-5 sm:p-6 shadow-agri-md relative overflow-hidden flex flex-col justify-between">
@@ -62,19 +64,33 @@ export const TokenDisplay = ({ booking, onLiveQueueClick }) => {
           <div className="bg-agri-ivory/50 p-3 rounded-xl border border-agri-ivory-muted text-center">
             <span className="text-[10px] uppercase font-bold text-agri-text-muted block">Est. Wait Time</span>
             <p className="font-heading text-xl font-extrabold text-agri-gold-dark mt-0.5 font-mono">
-              {booking.status === 'COMPLETED' ? '0 min' : '~24 mins'}
+              {booking.status === 'COMPLETED' ? '0 min' : `~${currentCentre.estWaitMinutes || 24} mins`}
             </p>
           </div>
         </div>
 
         {/* Mandi & Crop Details */}
         <div className="space-y-2.5 text-xs border-t border-agri-ivory-muted pt-4">
-          <div className="flex items-start space-x-2">
-            <MapPin className="w-4 h-4 text-agri-green shrink-0 mt-0.5" />
-            <div>
-              <strong className="font-bold text-agri-text block">{booking.centreName || 'Sonipat Main Procurement Centre'}</strong>
-              <p className="text-[11px] text-agri-text-muted">G.T. Road, Sector 15 Mandi Yard, Sonipat</p>
+          <div className="flex items-start justify-between gap-2">
+            <div className="flex items-start space-x-2">
+              <MapPin className="w-4 h-4 text-agri-green shrink-0 mt-0.5" />
+              <div>
+                <strong className="font-bold text-agri-text block">{booking.centreName || currentCentre.name}</strong>
+                <p className="text-[11px] text-agri-text-muted">{currentCentre.address}</p>
+              </div>
             </div>
+
+            {/* Google Maps Directions Action */}
+            <a
+              href={googleMapsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-agri-green-soft hover:bg-agri-green text-agri-green-dark hover:text-white px-2.5 py-1.5 rounded-lg text-[11px] font-bold flex items-center space-x-1 shrink-0 border border-agri-green-border transition-colors shadow-agri-sm"
+              title="Open Google Maps directions to this mandi"
+            >
+              <Navigation className="w-3.5 h-3.5" />
+              <span>Get Directions</span>
+            </a>
           </div>
 
           <div className="flex items-center justify-between bg-agri-ivory/60 p-3 rounded-xl border border-agri-ivory-muted text-xs">

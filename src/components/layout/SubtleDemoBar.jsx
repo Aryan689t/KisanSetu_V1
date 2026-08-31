@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDemo } from '../../context/DemoContext';
-import { UserCheck, ShieldCheck, Cpu, RotateCcw, Play } from 'lucide-react';
+import { UserCheck, ShieldCheck, Cpu, RotateCcw, Play, AlertTriangle, CheckCircle2 } from 'lucide-react';
 
 export const SubtleDemoBar = () => {
   const {
@@ -10,7 +10,9 @@ export const SubtleDemoBar = () => {
     completeProcurement,
     disbursePayment,
     resetDemoState,
-    activeBooking
+    activeBooking,
+    demoCondition,
+    setDemoCondition
   } = useDemo();
 
   return (
@@ -61,8 +63,37 @@ export const SubtleDemoBar = () => {
           </button>
         </div>
 
-        {/* Quick Simulation Trigger Actions for Hackathon Presentation */}
-        <div className="flex items-center space-x-2">
+        {/* Demo Congestion Simulation & Workflow Actions */}
+        <div className="flex items-center space-x-2 flex-wrap gap-y-1">
+          
+          {/* Congestion Simulation Controls */}
+          <div className="flex items-center space-x-1 border-r border-agri-green/50 pr-2">
+            <span className="text-[10px] text-agri-gold uppercase tracking-wider font-mono">
+              CONGESTION DEMO:
+            </span>
+
+            {demoCondition === 'NORMAL' ? (
+              <button
+                onClick={() => setDemoCondition('CONGESTED_SONIPAT')}
+                className="bg-rose-900/80 hover:bg-rose-800 text-rose-200 px-2 py-0.5 rounded text-[10px] font-bold inline-flex items-center space-x-1 border border-rose-600/50"
+                title="Simulate sudden heavy truck backlog at Sonipat Mandi (wait 24m -> 67m)"
+              >
+                <AlertTriangle className="w-3 h-3 text-rose-400" />
+                <span>Simulate Sonipat Congestion</span>
+              </button>
+            ) : (
+              <button
+                onClick={() => setDemoCondition('NORMAL')}
+                className="bg-agri-green-light hover:bg-agri-green text-white px-2 py-0.5 rounded text-[10px] font-bold inline-flex items-center space-x-1 border border-agri-green-light/50"
+                title="Restore normal Mandi queue loads"
+              >
+                <CheckCircle2 className="w-3 h-3 text-agri-gold" />
+                <span>Restore Normal Load</span>
+              </button>
+            )}
+          </div>
+
+          {/* Workflow Simulation Triggers */}
           {activeBooking?.status === 'WAITING' && (
             <button
               onClick={() => callNextFarmer('SNP-014')}
@@ -70,7 +101,7 @@ export const SubtleDemoBar = () => {
               title="Simulate operator calling token SNP-014 to Counter 2"
             >
               <Play className="w-3 h-3 text-agri-gold fill-agri-gold" />
-              <span>Simulate: Operator Call SNP-014</span>
+              <span>Simulate: Call SNP-014</span>
             </button>
           )}
 
@@ -81,7 +112,7 @@ export const SubtleDemoBar = () => {
               title="Simulate operator weighing & completing procurement"
             >
               <Play className="w-3 h-3 fill-agri-green-dark" />
-              <span>Simulate: Complete Procurement (38.5 Qtl)</span>
+              <span>Simulate: Complete (38.5 Qtl)</span>
             </button>
           )}
 
@@ -92,7 +123,7 @@ export const SubtleDemoBar = () => {
               title="Simulate Admin disbursing MSP payment"
             >
               <Play className="w-3 h-3 text-white fill-white" />
-              <span>Simulate: Disburse MSP ₹84,700</span>
+              <span>Simulate: Disburse ₹84,700</span>
             </button>
           )}
 
@@ -104,6 +135,7 @@ export const SubtleDemoBar = () => {
             <RotateCcw className="w-3 h-3" />
             <span>Reset Demo</span>
           </button>
+
         </div>
 
       </div>
