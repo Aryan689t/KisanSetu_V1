@@ -1,0 +1,54 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    background-color: #F6F2E8;
+    color: #243126;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Outfit', sans-serif;
+  }
+}
+
+/* Subtle Indian Agricultural Visual Motifs */
+.bg-grain-texture {
+  background-color: #F6F2E8;
+  background-image: radial-gradient(#245C3A 0.4px, transparent 0.4px), radial-gradient(#245C3A 0.4px, #F6F2E8 0.4px);
+  background-size: 16px 16px;
+  background-position: 0 0, 8px 8px;
+  background-opacity: 0.03;
+}
+
+.bg-field-pattern {
+  background-image: repeating-linear-gradient(-45deg, rgba(36, 92, 58, 0.02), rgba(36, 92, 58, 0.02) 10px, transparent 10px, transparent 20px);
+}
+
+.paper-surface {
+  background-color: #FFFDF7;
+  border: 1px solid #E5E0D5;
+  box-shadow: 0 2px 8px rgba(36, 49, 38, 0.03);
+}
+
+/* Custom Scrollbar for Agricultural Theme */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F6F2E8;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #D0C6B4;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #245C3A;
+}
