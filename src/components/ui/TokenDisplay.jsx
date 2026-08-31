@@ -1,92 +1,104 @@
 import React from 'react';
-import { Wheat, MapPin, Clock, CheckCircle2, QrCode } from 'lucide-react';
+import { Wheat, MapPin, Clock, CheckCircle2, ShieldCheck, ArrowRight, UserCheck, AlertTriangle } from 'lucide-react';
 import { StatusBadge } from './StatusBadge';
 
 export const TokenDisplay = ({ booking, onLiveQueueClick }) => {
   if (!booking) return null;
 
+  const isYou = booking.token === 'SNP-014';
+  const isCompleted = booking.status === 'COMPLETED';
+  const isDisbursed = booking.paymentStatus === 'DISBURSED';
+
   return (
-    <div className="bg-gradient-to-br from-agri-surface via-agri-surface to-agri-ivory-surface rounded-2xl border-2 border-agri-green/30 p-6 shadow-agri-lg relative overflow-hidden">
+    <div className="bg-[#FFFDF7] rounded-2xl border-2 border-agri-green/30 p-5 sm:p-6 shadow-agri-md relative overflow-hidden flex flex-col justify-between">
       
-      {/* Decorative wheat motif background element */}
-      <div className="absolute -right-6 -bottom-6 opacity-5 pointer-events-none text-agri-green">
-        <Wheat className="w-48 h-48" />
+      {/* Background Motif */}
+      <div className="absolute -right-8 -bottom-8 opacity-5 pointer-events-none text-agri-green">
+        <Wheat className="w-56 h-56" />
       </div>
 
-      {/* Top Pass Ribbon */}
-      <div className="flex items-center justify-between pb-4 border-b border-agri-ivory-muted">
-        <div className="flex items-center space-x-2">
-          <div className="w-7 h-7 rounded-md bg-agri-green text-white flex items-center justify-center font-bold text-xs">
-            DoCA
+      <div>
+        {/* Pass Header Ribbon */}
+        <div className="flex items-center justify-between pb-3.5 border-b border-agri-ivory-muted">
+          <div className="flex items-center space-x-2">
+            <div className="w-7 h-7 rounded-lg bg-agri-green text-white flex items-center justify-center font-bold text-xs shadow-agri-sm">
+              DoCA
+            </div>
+            <div>
+              <h4 className="font-heading font-bold text-sm text-agri-green tracking-tight">
+                Digital Mandi Procurement Pass
+              </h4>
+              <p className="text-[10px] text-agri-text-muted font-mono">
+                Pass ID: {booking.bookingId || 'BK-2026-8812'}
+              </p>
+            </div>
           </div>
-          <div>
-            <h4 className="font-heading font-bold text-sm text-agri-green">
-              KisanSetu Official Token Pass
-            </h4>
-            <p className="text-[10px] text-agri-text-muted">
-              Booking Ref: {booking.bookingId}
+          <StatusBadge status={booking.status} type="queue" />
+        </div>
+
+        {/* Token Number Display */}
+        <div className="my-5 text-center bg-gradient-to-b from-agri-ivory/80 to-agri-ivory/40 rounded-2xl p-5 border border-agri-gold/40 relative shadow-agri-sm">
+          <span className="text-[11px] font-extrabold text-agri-gold-dark uppercase tracking-widest block mb-1 font-mono">
+            YOUR PROCUREMENT TOKEN
+          </span>
+          <div className="font-heading font-extrabold text-4xl sm:text-5xl text-agri-green tracking-tight font-mono">
+            {booking.token}
+          </div>
+
+          <div className="mt-2.5 inline-flex items-center space-x-2 bg-agri-green-soft px-3 py-1 rounded-full text-xs font-bold text-agri-green-dark border border-agri-green-border">
+            <Clock className="w-3.5 h-3.5 text-agri-green shrink-0" />
+            <span>Station: {booking.counter || 'Counter 2'}</span>
+          </div>
+        </div>
+
+        {/* Queue Quick Stats Grid */}
+        <div className="grid grid-cols-2 gap-3 mb-5">
+          <div className="bg-agri-ivory/50 p-3 rounded-xl border border-agri-ivory-muted text-center">
+            <span className="text-[10px] uppercase font-bold text-agri-text-muted block">Farmers Ahead</span>
+            <p className="font-heading text-xl font-extrabold text-agri-text mt-0.5 font-mono">
+              {booking.status === 'COMPLETED' ? '0' : '3 Farmers'}
+            </p>
+          </div>
+          <div className="bg-agri-ivory/50 p-3 rounded-xl border border-agri-ivory-muted text-center">
+            <span className="text-[10px] uppercase font-bold text-agri-text-muted block">Est. Wait Time</span>
+            <p className="font-heading text-xl font-extrabold text-agri-gold-dark mt-0.5 font-mono">
+              {booking.status === 'COMPLETED' ? '0 min' : '~24 mins'}
             </p>
           </div>
         </div>
-        <StatusBadge status={booking.status} type="queue" />
-      </div>
 
-      {/* Token Main Core Number */}
-      <div className="my-6 text-center bg-agri-ivory/60 rounded-xl p-5 border border-agri-gold/30 relative">
-        <span className="text-[11px] font-bold text-agri-gold uppercase tracking-widest block mb-1">
-          YOUR TOKEN NUMBER
-        </span>
-        <div className="font-heading font-extrabold text-4xl sm:text-5xl text-agri-green tracking-tight font-mono">
-          {booking.token}
-        </div>
-        <div className="mt-2 inline-flex items-center space-x-1.5 bg-agri-green-soft px-3 py-1 rounded-full text-xs font-semibold text-agri-green-dark">
-          <Clock className="w-3.5 h-3.5 text-agri-green" />
-          <span>Assigned: {booking.counter}</span>
-        </div>
-      </div>
-
-      {/* Key Queue Stats Grid */}
-      <div className="grid grid-cols-2 gap-3 mb-5">
-        <div className="bg-agri-surface p-3 rounded-lg border border-agri-ivory-muted text-center">
-          <span className="text-[10px] uppercase font-bold text-agri-text-muted">Farmers Ahead</span>
-          <p className="font-heading text-xl font-bold text-agri-text mt-0.5">3 Farmers</p>
-        </div>
-        <div className="bg-agri-surface p-3 rounded-lg border border-agri-ivory-muted text-center">
-          <span className="text-[10px] uppercase font-bold text-agri-text-muted">Est. Waiting Time</span>
-          <p className="font-heading text-xl font-bold text-agri-gold-dark mt-0.5">~24 mins</p>
-        </div>
-      </div>
-
-      {/* Booking Location & Crop Details */}
-      <div className="space-y-2.5 text-xs border-t border-agri-ivory-muted pt-4">
-        <div className="flex items-start space-x-2">
-          <MapPin className="w-4 h-4 text-agri-green shrink-0 mt-0.5" />
-          <div>
-            <span className="font-bold text-agri-text">{booking.centreName}</span>
-            <p className="text-[11px] text-agri-text-muted">G.T. Road, Sector 15 Mandi Yard, Sonipat</p>
+        {/* Mandi & Crop Details */}
+        <div className="space-y-2.5 text-xs border-t border-agri-ivory-muted pt-4">
+          <div className="flex items-start space-x-2">
+            <MapPin className="w-4 h-4 text-agri-green shrink-0 mt-0.5" />
+            <div>
+              <strong className="font-bold text-agri-text block">{booking.centreName || 'Sonipat Main Procurement Centre'}</strong>
+              <p className="text-[11px] text-agri-text-muted">G.T. Road, Sector 15 Mandi Yard, Sonipat</p>
+            </div>
           </div>
-        </div>
 
-        <div className="flex items-center justify-between bg-agri-ivory/50 p-2.5 rounded-lg border border-agri-ivory-muted">
-          <div>
-            <span className="text-[10px] text-agri-text-muted uppercase font-semibold">Crop & Quantity</span>
-            <p className="font-bold text-agri-text">{booking.crop} ({booking.expectedQty} Quintals)</p>
-          </div>
-          <div className="text-right">
-            <span className="text-[10px] text-agri-text-muted uppercase font-semibold">Slot Schedule</span>
-            <p className="font-bold text-agri-green">{booking.slotTime}</p>
+          <div className="flex items-center justify-between bg-agri-ivory/60 p-3 rounded-xl border border-agri-ivory-muted text-xs">
+            <div>
+              <span className="text-[10px] text-agri-text-muted uppercase font-semibold block">Crop Offered</span>
+              <p className="font-bold text-agri-text mt-0.5">{booking.crop} ({booking.expectedQty} Qtl)</p>
+            </div>
+            <div className="text-right">
+              <span className="text-[10px] text-agri-text-muted uppercase font-semibold block">Slot Schedule</span>
+              <p className="font-bold text-agri-green mt-0.5 font-mono">{booking.slotTime || '11:00 AM - 11:30 AM'}</p>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Actions */}
+      {/* Primary Action Button */}
       {onLiveQueueClick && (
         <button
           onClick={onLiveQueueClick}
-          className="mt-5 w-full bg-agri-green hover:bg-agri-green-dark text-white font-semibold py-2.5 px-4 rounded-xl text-xs transition-all shadow-agri-sm flex items-center justify-center space-x-2"
+          className="mt-5 w-full bg-agri-green hover:bg-agri-green-dark text-white font-bold py-3 px-4 rounded-xl text-xs transition-all shadow-agri-sm flex items-center justify-center space-x-2 hover:scale-[1.01]"
         >
           <CheckCircle2 className="w-4 h-4 text-agri-gold" />
-          <span>Track Live Queue Position</span>
+          <span>Open Live Queue Tracker</span>
+          <ArrowRight className="w-4 h-4" />
         </button>
       )}
 

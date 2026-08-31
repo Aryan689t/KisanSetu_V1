@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDemo } from '../../context/DemoContext';
-import { History, ShieldCheck, Download, CheckCircle2, Calculator, ArrowRight, Building } from 'lucide-react';
+import { History, ShieldCheck, Download, CheckCircle2, Calculator, Building, FileCheck } from 'lucide-react';
 import { StatusBadge } from '../ui/StatusBadge';
 
 export const FarmerHistory = () => {
@@ -9,20 +9,20 @@ export const FarmerHistory = () => {
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
       
-      {/* Title & Description */}
+      {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-agri-ivory-muted">
         <div>
           <h1 className="font-heading text-2xl font-bold text-agri-text">
             Procurement Receipts & Direct Benefit Transfer (DBT) Payouts
           </h1>
-          <p className="text-xs text-agri-text-muted mt-1 font-sans">
+          <p className="text-xs text-agri-text-muted mt-0.5 font-sans">
             Transparent MSP calculations, government quality inspection logs, and direct bank settlement records.
           </p>
         </div>
 
-        <div className="flex items-center space-x-2 text-xs text-agri-green-dark bg-agri-green-soft px-3 py-1.5 rounded-lg border border-agri-green-border font-medium">
+        <div className="flex items-center space-x-2 text-xs text-agri-green-dark bg-agri-green-soft px-3.5 py-2 rounded-xl border border-agri-green-border font-medium">
           <Building className="w-4 h-4 text-agri-green shrink-0" />
-          <span>Aadhaar-Linked DBT Account: SBI ****4092</span>
+          <span>Aadhaar-Linked DBT Bank A/C: <strong>State Bank of India (****4092)</strong></span>
         </div>
       </div>
 
@@ -34,7 +34,7 @@ export const FarmerHistory = () => {
             Transparent Government MSP Settlement Formula
           </strong>
           <p className="text-agri-text-muted mt-0.5 leading-relaxed font-sans">
-            All procurement payouts are calculated strictly based on verified net weighment at Mandi weighbridges multiplied by the official Cabinet Committee on Economic Affairs (CCEA) Minimum Support Price (MSP) rate. No hidden mandi fees or deductions.
+            All procurement payouts are calculated strictly based on verified net weighment at Mandi weighbridges multiplied by the official Cabinet Committee on Economic Affairs (CCEA) Minimum Support Price (MSP) rate. Direct transfer to your bank account with zero middleman deductions.
           </p>
         </div>
       </div>
@@ -46,14 +46,14 @@ export const FarmerHistory = () => {
             key={item.id}
             className="paper-surface rounded-2xl p-6 border border-agri-ivory-muted shadow-agri-sm hover:border-agri-green-border transition-all"
           >
-            {/* Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-agri-ivory-muted">
+            {/* Card Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-agri-ivory-muted">
               <div>
                 <div className="flex items-center space-x-2">
-                  <span className="text-[10px] font-bold uppercase bg-agri-green-soft text-agri-green-dark px-2 py-0.5 rounded">
+                  <span className="text-[10px] font-extrabold uppercase bg-agri-green-soft text-agri-green-dark px-2.5 py-0.5 rounded border border-agri-green-border">
                     {item.season}
                   </span>
-                  <span className="text-xs text-agri-text-muted">{item.date}</span>
+                  <span className="text-xs text-agri-text-muted font-medium">{item.date}</span>
                 </div>
                 <h3 className="font-heading text-lg font-bold text-agri-text mt-1">
                   {item.crop}
@@ -66,20 +66,20 @@ export const FarmerHistory = () => {
               <div className="flex items-center space-x-3">
                 <StatusBadge status={item.paymentStatus} type="payment" />
                 <button
-                  onClick={() => alert(`Downloading official DoCA Procurement Certificate ${item.id}`)}
-                  className="p-2 rounded-lg bg-agri-ivory text-agri-green hover:bg-agri-green-soft transition-colors border border-agri-ivory-muted"
-                  title="Download Receipt PDF"
+                  onClick={() => alert(`Downloading official DoCA Procurement Receipt ${item.id}`)}
+                  className="p-2 rounded-xl bg-agri-ivory text-agri-green hover:bg-agri-green-soft transition-colors border border-agri-ivory-muted"
+                  title="Download Official PDF Receipt"
                 >
                   <Download className="w-4 h-4" />
                 </button>
               </div>
             </div>
 
-            {/* Middle Section: Transparent Calculation Box */}
+            {/* Payout Calculation Formula Box */}
             <div className="my-5 bg-agri-ivory/60 rounded-xl p-4 border border-agri-gold/30">
-              <div className="text-xs font-bold text-agri-gold-dark uppercase tracking-wider mb-2 flex items-center space-x-1.5">
+              <div className="text-xs font-bold text-agri-gold-dark uppercase tracking-wider mb-2 flex items-center space-x-1.5 font-mono">
                 <Calculator className="w-4 h-4 text-agri-gold-dark" />
-                <span>Verified Payout Calculation Breakdown</span>
+                <span>Verified Government Payout Formula</span>
               </div>
 
               <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
@@ -88,39 +88,39 @@ export const FarmerHistory = () => {
                     {item.formula}
                   </div>
                   <p className="text-xs text-agri-text-muted font-sans">
-                    Net Weight: <strong>{item.actualQty} Quintals</strong> • Rate: <strong>₹{item.ratePerQuintal.toLocaleString()} / Qtl</strong>
+                    Verified Weighbridge Net Weight: <strong>{item.actualQty} Quintals</strong> • MSP Rate: <strong>₹{item.ratePerQuintal.toLocaleString()} / Qtl</strong>
                   </p>
                 </div>
 
-                <div className="text-left lg:text-right bg-agri-surface p-3 rounded-lg border border-agri-ivory-muted">
-                  <span className="text-[10px] text-agri-text-muted uppercase font-bold">Total Disbursed Payout</span>
-                  <p className="font-heading text-2xl font-extrabold text-agri-green">
+                <div className="text-left lg:text-right bg-agri-surface p-3 rounded-xl border border-agri-ivory-muted">
+                  <span className="text-[10px] text-agri-text-muted uppercase font-bold block">Total Disbursed Payout</span>
+                  <p className="font-heading text-2xl font-extrabold text-agri-green font-mono">
                     ₹{item.totalAmount.toLocaleString()}
                   </p>
                 </div>
               </div>
             </div>
 
-            {/* Bottom Inspection & Bank Details */}
+            {/* Bottom Inspection & Bank Account Details */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs bg-agri-surface p-3 rounded-xl border border-agri-ivory-muted">
               <div>
-                <span className="text-[10px] text-agri-text-muted uppercase font-semibold">Quality & Moisture</span>
+                <span className="text-[10px] text-agri-text-muted uppercase font-semibold block">Quality Grade & Moisture</span>
                 <p className="font-bold text-agri-text mt-0.5">
-                  {item.qualityGrade} • Moisture: {item.moisturePercent}%
+                  {item.qualityGrade || 'Grade A'} • Moisture: {item.moisturePercent || 12.4}%
                 </p>
               </div>
 
               <div>
-                <span className="text-[10px] text-agri-text-muted uppercase font-semibold">Bank Settlement</span>
+                <span className="text-[10px] text-agri-text-muted uppercase font-semibold block">Bank Account Credit</span>
                 <p className="font-bold text-agri-text mt-0.5">
-                  {item.bankAccount}
+                  {item.bankAccount || 'State Bank of India (****4092)'}
                 </p>
               </div>
 
               <div>
-                <span className="text-[10px] text-agri-text-muted uppercase font-semibold">DBT Transaction Ref</span>
+                <span className="text-[10px] text-agri-text-muted uppercase font-semibold block">DBT Reference ID</span>
                 <p className="font-mono text-xs font-bold text-agri-green mt-0.5">
-                  {item.dbtReference}
+                  {item.dbtReference || 'DBT-UTIB000984210'}
                 </p>
               </div>
             </div>
