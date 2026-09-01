@@ -60,13 +60,14 @@ export const RequiresAttention = ({ onSelectCentre }) => {
                 </div>
 
                 <span
-                  className={`text-[10px] font-bold px-2 py-0.5 rounded border uppercase font-mono ${
+                  className={`text-[10px] font-bold px-2.5 py-0.5 rounded border uppercase font-sans inline-flex items-center gap-1.5 ${
                     isCongested
                       ? 'bg-rose-100 text-rose-800 border-rose-300'
                       : 'bg-amber-100 text-amber-800 border-amber-300'
                   }`}
                 >
-                  {isCongested ? '🔴 HIGH CONGESTION' : '🟡 MODERATE LOAD'}
+                  <span className={`w-1.5 h-1.5 rounded-full ${isCongested ? 'bg-rose-600' : 'bg-amber-600'}`}></span>
+                  <span>{isCongested ? 'High Congestion' : 'Moderate Load'}</span>
                 </span>
               </div>
 

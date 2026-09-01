@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useDemo } from '../../context/DemoContext';
-import { Bell, Wheat, LayoutDashboard, MapPin, Clock, ReceiptText, Volume2, Settings, HelpCircle } from 'lucide-react';
+import { Bell, Wheat, LayoutDashboard, MapPin, Clock, ReceiptText, Settings, Volume2, HelpCircle } from 'lucide-react';
 import { NotificationDrawer } from '../ui/NotificationDrawer';
 import { FarmerMobileNav } from './FarmerMobileNav';
-import { OnboardingModal } from '../farmer/OnboardingModal';
+import { FarmerSettingsModal } from '../farmer/FarmerSettingsModal';
 
 export const Navbar = () => {
   const {
@@ -13,11 +13,10 @@ export const Navbar = () => {
     notifications,
     lang,
     setLang,
+    currentUser,
+    setIsSettingsOpen,
     isAudioActive,
-    setIsAudioActive,
-    speakText,
-    openWalkthrough,
-    openOnboarding
+    setIsAudioActive
   } = useDemo();
   const [isNotifOpen, setIsNotifOpen] = useState(false);
 
@@ -25,7 +24,7 @@ export const Navbar = () => {
 
   return (
     <>
-      <OnboardingModal />
+      <FarmerSettingsModal />
 
       {/* Top Header */}
       <header className="bg-agri-green text-white border-b border-agri-green-dark shadow-agri-md sticky top-0 z-40">
@@ -34,13 +33,14 @@ export const Navbar = () => {
             
             {/* Branding Logo & DoCA Department Badge */}
             <div className="flex items-center space-x-3">
-              <div
-                onClick={() => openOnboarding()}
-                className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-agri-gold flex items-center justify-center text-agri-green-dark shadow-sm border border-agri-gold-light/40 shrink-0 cursor-pointer hover:scale-105 transition-transform"
-                title="Open Language & Role Onboarding Settings"
+              <button
+                onClick={() => setIsSettingsOpen(true)}
+                className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-agri-gold flex items-center justify-center text-agri-green-dark shadow-sm border border-agri-gold-light/40 shrink-0 cursor-pointer hover:scale-105 transition-transform touch-target"
+                title="Open Settings & Profile"
+                aria-label="Open settings"
               >
                 <Wheat className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2.2]" />
-              </div>
+              </button>
 
               <div>
                 <div className="flex items-center space-x-2">
@@ -110,16 +110,13 @@ export const Navbar = () => {
               </nav>
             )}
 
-            {/* Language & Accessibility Control Bar */}
+            {/* Language, Notifications & Profile Action Area */}
             <div className="flex items-center space-x-1.5 sm:space-x-2">
               
-              {/* English / Hindi Pill Switcher */}
+              {/* English / Hindi Switcher */}
               <div className="flex items-center bg-agri-green-dark/70 p-0.5 rounded-lg border border-agri-gold/30">
                 <button
-                  onClick={() => {
-                    setLang('en');
-                    speakText('English language selected', 'English language selected');
-                  }}
+                  onClick={() => setLang('en')}
                   className={`px-2 py-1 rounded text-[11px] font-bold transition-all ${
                     lang === 'en' ? 'bg-agri-gold text-agri-green-dark shadow-sm' : 'text-agri-ivory/80 hover:text-white'
                   }`}
@@ -128,10 +125,7 @@ export const Navbar = () => {
                 </button>
 
                 <button
-                  onClick={() => {
-                    setLang('hi');
-                    speakText('हिंदी भाषा चुनी गई है', 'Hindi language selected');
-                  }}
+                  onClick={() => setLang('hi')}
                   className={`px-2 py-1 rounded text-[11px] font-bold transition-all ${
                     lang === 'hi' ? 'bg-agri-gold text-agri-green-dark shadow-sm' : 'text-agri-ivory/80 hover:text-white'
                   }`}
@@ -139,43 +133,6 @@ export const Navbar = () => {
                   हिंदी
                 </button>
               </div>
-
-              {/* Audio Assistance Button */}
-              <button
-                onClick={() => {
-                  const nextState = !isAudioActive;
-                  setIsAudioActive(nextState);
-                  if (nextState) speakText('आवाज सहायता चालू है', 'Audio assistance enabled');
-                }}
-                className={`p-1.5 sm:px-2.5 sm:py-1 rounded-lg text-xs font-bold flex items-center space-x-1 border transition-all ${
-                  isAudioActive
-                    ? 'bg-agri-gold text-agri-green-dark border-agri-gold shadow-sm'
-                    : 'bg-agri-green-dark/60 text-agri-ivory border-white/10 hover:border-white/30'
-                }`}
-                title="Toggle Voice Assistance"
-              >
-                <Volume2 className={`w-3.5 h-3.5 ${isAudioActive ? 'animate-pulse' : ''}`} />
-                <span className="hidden sm:inline">{isAudioActive ? (lang === 'hi' ? 'आवाज चालू' : 'Audio On') : (lang === 'hi' ? 'आवाज' : 'Audio')}</span>
-              </button>
-
-              {/* Help / How-it-works walkthrough */}
-              <button
-                onClick={() => { openWalkthrough(); speakText('कैसे काम करता है देखें', 'See how it works'); }}
-                className="p-1.5 sm:px-2.5 sm:py-1 rounded-lg text-xs font-bold flex items-center space-x-1 border transition-all bg-agri-green-dark/60 text-agri-ivory border-white/10 hover:border-white/30"
-                title="How it works"
-              >
-                <HelpCircle className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">{lang === 'hi' ? 'सहायता' : 'Help'}</span>
-              </button>
-
-              {/* Settings / Onboarding Trigger */}
-              <button
-                onClick={() => openOnboarding()}
-                className="p-1.5 text-agri-ivory hover:text-white rounded-lg hover:bg-agri-green-dark/60 transition-colors"
-                title="Settings & Language Setup"
-              >
-                <Settings className="w-4 h-4" />
-              </button>
 
               {/* Notification Bell */}
               <button
@@ -192,19 +149,25 @@ export const Navbar = () => {
                 )}
               </button>
               
-              <div className="pl-2.5 sm:pl-3 border-l border-agri-green-light/30 flex items-center space-x-2">
+              {/* Profile Avatar / Settings Button */}
+              <button
+                onClick={() => setIsSettingsOpen(true)}
+                className="pl-2.5 sm:pl-3 border-l border-agri-green-light/30 flex items-center space-x-2 hover:opacity-90 transition-opacity touch-target"
+                title="Settings & Profile"
+              >
                 <div className="w-8 h-8 rounded-full bg-agri-gold/20 text-agri-gold flex items-center justify-center font-bold text-xs border border-agri-gold/40 shrink-0">
                   {activeRole === 'farmer' ? 'RS' : activeRole === 'operator' ? 'OP' : 'AD'}
                 </div>
                 <div className="hidden lg:block text-left">
                   <p className="text-xs font-bold leading-tight text-white">
-                    {activeRole === 'farmer' ? 'Ramesh Singh' : activeRole === 'operator' ? 'Operator #4' : 'DoCA Admin'}
+                    {currentUser?.name || (activeRole === 'farmer' ? 'Ramesh Singh' : activeRole === 'operator' ? 'Operator #4' : 'DoCA Admin')}
                   </p>
                   <p className="text-[10px] text-agri-ivory/70 capitalize leading-tight font-sans">
                     {activeRole === 'farmer' ? 'Sonipat, Haryana' : activeRole === 'operator' ? 'Sonipat Yard' : 'New Delhi HQ'}
                   </p>
                 </div>
-              </div>
+                <Settings className="w-3.5 h-3.5 text-agri-gold/80 hidden sm:block" />
+              </button>
 
             </div>
 
@@ -220,4 +183,3 @@ export const Navbar = () => {
     </>
   );
 };
-

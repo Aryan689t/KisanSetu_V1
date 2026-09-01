@@ -1,5 +1,5 @@
 import { useDemo } from '../../context/DemoContext';
-import { MapPin, Clock, ArrowRight, CheckCircle2, AlertTriangle, Navigation, Plus } from 'lucide-react';
+import { Clock, ArrowRight, CheckCircle2, AlertTriangle, Navigation, Plus } from 'lucide-react';
 
 export const FarmerDashboard = () => {
   const {
@@ -29,140 +29,145 @@ export const FarmerDashboard = () => {
   // Congestion alert condition
   const shouldShowRerouteWarning = isBookedCentreCongested && isAlternativeBetter && !dismissedRerouteAlert && !isCompleted && !isDisbursed;
 
-  const t = (en, hi) => (lang === 'hi' ? hi : en);
-
-  // Farmers ahead (queue position based)
-  const farmersAheadCount = Math.max(0, 2); // default demo context
+  const t = (hi, en) => (lang === 'hi' ? hi : en);
 
   return (
-    <div className="space-y-4 animate-in fade-in duration-300">
-
-      {/* GREETING — light touch, then straight to the one thing that matters */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="font-heading text-lg sm:text-xl font-bold text-agri-text">
-            {t('Namaste, Ramesh Singh ji 🙏', 'नमस्ते, रमेश सिंह जी 🙏')}
-          </h1>
-          <p className="text-xs text-agri-text-muted mt-0.5">
-            {isCompleted || isDisbursed
-              ? t('Your procurement is done. 🎉', 'आपकी खरीद पूरी हो गई है। 🎉')
-              : t('Here is what to do next', 'अगला कदम यह है')}
-          </p>
-        </div>
-        <button
-          onClick={() => setFarmerTab('centres')}
-          className="bg-agri-green hover:bg-agri-green-dark text-white px-4 py-2.5 rounded-xl text-xs font-bold touch-target min-h-[44px] shadow-agri-sm transition-all inline-flex items-center space-x-1.5"
-        >
-          <Plus className="w-4 h-4" />
-          <span>{t('Book Slot', 'स्लॉट बुक करें')}</span>
-        </button>
-      </div>
-
-      {/* 1. DYNAMIC CONGESTION REROUTING ALERT (prominent, high contrast) */}
+    <div className="space-y-5 animate-in fade-in duration-300 font-sans pb-6 sm:pb-0">
+      
+      {/* 1. DYNAMIC CONGESTION REROUTING ALERT */}
       {shouldShowRerouteWarning && (
-        <div className="bg-[#4A1510] text-white rounded-2xl p-4 sm:p-5 shadow-lg border-2 border-rose-500 relative overflow-hidden animate-in slide-in-from-top duration-300">
-          <div className="space-y-3">
-            <div className="flex items-start space-x-3">
-              <div className="p-2 bg-rose-900 text-amber-300 rounded-xl shrink-0 border border-rose-500">
-                <AlertTriangle className="w-6 h-6 animate-pulse" />
-              </div>
-              <div className="space-y-1">
-                <span className="text-[11px] font-extrabold uppercase bg-amber-400 text-rose-950 px-2.5 py-0.5 rounded font-mono">
-                  {t('⚠️ मंडी में भारी भीड़', '⚠️ MANDI HEAVY TRAFFIC ALERT')}
-                </span>
-
-                <h3 className="font-heading text-base sm:text-lg font-bold text-white">
-                  {t(
-                    `${bookedCentre.name} में इंतजार बढ़कर ~${bookedCentre.estWaitMinutes} मिनट`,
-                    `${bookedCentre.name} waiting is now ~${bookedCentre.estWaitMinutes} min`
-                  )}
-                </h3>
-
-                <p className="text-xs text-rose-100 leading-relaxed max-w-xl">
-                  {t(
-                    `आपकी बुकिंग ${bookedCentre.name} की है। पास की मंडी में सिर्फ ~${recommendedCentre.estWaitMinutes} मिनट का इंतजार है।`,
-                    `Your booking is at ${bookedCentre.name}. A nearby mandi has just ~${recommendedCentre.estWaitMinutes} min wait.`
-                  )}
-                </p>
-              </div>
+        <div className="bg-[#4A1510] text-white rounded-2xl p-4 sm:p-5 shadow-md border-2 border-rose-500 space-y-3">
+          <div className="flex items-start space-x-3">
+            <div className="p-2 bg-rose-900 text-amber-300 rounded-xl shrink-0 border border-rose-500">
+              <AlertTriangle className="w-6 h-6 animate-pulse" />
             </div>
+            <div className="space-y-1">
+              <span className="text-[11px] font-extrabold bg-amber-400 text-rose-950 px-2.5 py-0.5 rounded font-sans inline-flex items-center gap-1 mb-0.5">
+                <AlertTriangle className="w-3.5 h-3.5 text-rose-950 shrink-0" />
+                <span>{t('सोनीपत मंडी में भारी भीड़ अलर्ट', 'Sonipat Mandi Backlog Alert')}</span>
+              </span>
 
-            {/* Reroute Action Buttons */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 pt-1">
-              <button
-                onClick={() => {
-                  switchBookingCentre(recommendedCentre.id);
-                  speakText('आपकी बुकिंग बदल दी गई है', 'Your booking has been switched');
-                }}
-                className="bg-amber-400 hover:bg-amber-300 text-rose-950 font-extrabold text-sm px-4 py-3 rounded-xl shadow-md transition-all flex items-center justify-center space-x-1.5 touch-target min-h-[48px]"
-              >
-                <span>{t('पानीपत बदलें (~31म)', `Switch to ${recommendedCentre.name.split(' ')[0]} (~${recommendedCentre.estWaitMinutes}m)`)}</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
+              <h3 className="font-heading text-base sm:text-lg font-bold text-white">
+                {t(
+                  `${bookedCentre.name} में इंतजार समय बढ़कर लगभग ${bookedCentre.estWaitMinutes} मिनट हो गया है`,
+                  `${bookedCentre.name} waiting time increased to about ${bookedCentre.estWaitMinutes} minutes`
+                )}
+              </h3>
 
-              <button
-                onClick={() => setDismissedRerouteAlert(true)}
-                className="bg-rose-950 hover:bg-rose-900 text-rose-200 text-xs font-semibold px-4 py-3 rounded-xl transition-colors border border-rose-700 text-center touch-target min-h-[44px]"
-              >
-                {t('अभी नहीं', 'Not now')}
-              </button>
+              <p className="text-xs text-rose-100 leading-relaxed max-w-xl">
+                {t(
+                  `आपकी बुकिंग सोनीपत मंडी की है। पास की पानीपत मंडी में केवल लगभग ${recommendedCentre.estWaitMinutes} मिनट का इंतजार है।`,
+                  `Your booking remains at Sonipat. Panipat Mandi is available nearby with only about ${recommendedCentre.estWaitMinutes} minutes wait.`
+                )}
+              </p>
             </div>
+          </div>
 
+          {/* Reroute Contextual Buttons */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+            <button
+              onClick={() => {
+                switchBookingCentre(recommendedCentre.id);
+                if (speakText) speakText('आपकी बुकिंग बदल दी गई है', 'Your booking has been switched');
+              }}
+              className="bg-amber-400 hover:bg-amber-300 text-rose-950 font-extrabold text-xs px-4 py-3 rounded-xl shadow-md transition-all flex items-center justify-center space-x-1.5 touch-target min-h-[48px]"
+            >
+              <span>{t(`पानीपत बदलें (~${recommendedCentre.estWaitMinutes} मिनट)`, `Switch to Panipat (~${recommendedCentre.estWaitMinutes} min wait)`)}</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+
+            <button
+              onClick={() => setDismissedRerouteAlert(true)}
+              className="bg-rose-950 hover:bg-rose-900 text-rose-200 text-xs font-semibold px-4 py-3 rounded-xl transition-colors border border-rose-700 text-center touch-target min-h-[48px]"
+            >
+              {t('सोनीपत ही रखें', 'Keep Sonipat')}
+            </button>
           </div>
         </div>
       )}
 
-      {/* 2. PRIMARY FARMER TOKEN CARD — ONE question answered: "What do I do now?" */}
-      <div className="bg-[#17432A] text-white rounded-2xl p-5 sm:p-6 shadow-agri-md relative overflow-hidden space-y-4">
-        {/* PRIMARY TASK BOX */}
-        <div className="p-4.5 rounded-xl bg-[#123621] border border-agri-gold/30 shadow-inner font-sans space-y-3">
+      {/* 2. PRIMARY FARMER STATUS HERO CARD */}
+      <div className="bg-[#17432A] text-white rounded-2xl p-5 sm:p-6 shadow-agri-md space-y-4">
+        
+        {/* Greeting Header */}
+        <div className="flex items-center justify-between border-b border-white/10 pb-3">
+          <div>
+            <h1 className="font-heading text-xl sm:text-2xl font-bold tracking-tight text-white">
+              {t('नमस्ते, रमेश जी 🙏', 'Namaste, Ramesh ji 🙏')}
+            </h1>
+            <p className="text-xs text-agri-ivory/80 mt-0.5">
+              {isCompleted || isDisbursed
+                ? t('आपकी फसल खरीद पूरी हो गई है।', 'Your crop procurement is completed.')
+                : t('आपकी फसल खरीद स्थिति', 'Your crop procurement status')}
+            </p>
+          </div>
 
+          <div className="flex items-center space-x-2">
+            <span className="text-xs text-agri-gold bg-[#102e1c] px-3 py-1.5 rounded-xl border border-agri-gold/20 font-mono">
+              {bookedCentre.name.split(' ')[0]} Yard
+            </span>
+            <button
+              onClick={() => setFarmerTab('centres')}
+              className="bg-agri-green-light hover:bg-agri-green text-white px-3 py-1.5 rounded-xl text-xs font-bold transition-colors inline-flex items-center gap-1 border border-white/20 touch-target"
+              title="Book another slot"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">{t('स्लॉट बुक करें', 'Book Slot')}</span>
+            </button>
+          </div>
+        </div>
+
+        {/* PRIMARY STATUS & ONE VISUALLY DOMINANT PRIMARY CTA */}
+        <div className="bg-[#102e1c] p-4.5 rounded-xl border border-agri-gold/30 space-y-3.5">
+          
           {/* WAITING State */}
           {activeBooking?.status === 'WAITING' && (
-            <div className="space-y-3.5 text-amber-100">
-              <div className="flex items-center justify-between border-b border-white/10 pb-3">
+            <div className="space-y-3 text-amber-100">
+              <div className="flex items-start justify-between border-b border-white/10 pb-3">
                 <div>
-                  <span className="text-[11px] text-agri-gold font-bold block">
-                    {t('आपका टोकन नंबर', 'Your Token Number')}
+                  <span className="text-xs text-agri-gold font-bold block">
+                    {t('आपकी बारी आने वाली है', 'Your turn is coming')}
                   </span>
-                  <span className="font-heading font-extrabold text-3xl sm:text-4xl text-agri-gold font-mono tracking-tight">
+                  <div className="font-heading font-extrabold text-3xl sm:text-4xl text-white font-mono tracking-tight mt-0.5">
                     {activeBooking?.token || 'SNP-014'}
-                  </span>
+                  </div>
                 </div>
 
                 <div className="text-right">
-                  <span className="text-[11px] text-agri-ivory/70 block">
-                    {t('काउंटर', 'Counter')}
-                  </span>
-                  <span className="text-xs font-bold text-white font-mono bg-[#17432A] px-2.5 py-1 rounded-lg border border-agri-gold/30 inline-block mt-0.5">
-                    {activeBooking?.counter || 'Counter 2'}
-                  </span>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3 text-center">
-                <div className="bg-[#17432A]/80 p-3 rounded-xl border border-white/10">
-                  <span className="text-[11px] text-agri-ivory/80 block">
+                  <span className="text-[11px] text-agri-ivory/70 block font-sans">
                     {t('आगे किसान', 'Farmers ahead')}
                   </span>
-                  <p className="font-heading text-2xl font-extrabold text-white font-mono mt-0.5">{farmersAheadCount}</p>
-                </div>
-                <div className="bg-[#17432A]/80 p-3 rounded-xl border border-white/10">
-                  <span className="text-[11px] text-agri-ivory/80 block">
-                    {t('अनुमानित समय', 'Estimated wait')}
+                  <span className="font-heading font-extrabold text-2xl text-agri-gold font-sans block mt-0.5">
+                    3
                   </span>
-                  <p className="font-heading text-2xl font-extrabold text-agri-gold font-mono mt-0.5">~{bookedCentre.estWaitMinutes} min</p>
                 </div>
               </div>
 
+              {/* Natural sans-serif text layout */}
+              <div className="space-y-2 text-xs text-agri-ivory/90 bg-[#17432A] p-3 rounded-xl border border-white/10 font-sans">
+                <div className="flex items-center justify-between">
+                  <span className="flex items-center gap-1.5">
+                    <Clock className="w-3.5 h-3.5 text-agri-gold shrink-0" />
+                    <span>{t('अनुमानित इंतजार समय:', 'Estimated waiting time:')}</span>
+                  </span>
+                  <strong className="text-agri-gold font-bold text-sm font-sans">~{bookedCentre.estWaitMinutes} minutes</strong>
+                </div>
+                <div className="flex items-center justify-between pt-1 border-t border-white/10 text-[11px] text-agri-ivory/80">
+                  <span className="flex items-center gap-1">
+                    <Navigation className="w-3 h-3 text-agri-gold shrink-0" />
+                    <span>{bookedCentre.name}</span>
+                  </span>
+                  <span>Slot: <strong className="text-white font-bold">{activeBooking?.slotTime || '11:00 AM – 11:30 AM'}</strong></span>
+                </div>
+              </div>
+
+              {/* THE ONE VISUALLY DOMINANT PRIMARY CTA */}
               <button
-                onClick={() => {
-                  setFarmerTab('queue');
-                  speakText('अपनी कतार स्थिति देखें', 'Tracking live queue position');
-                }}
-                className="w-full bg-agri-gold hover:bg-agri-gold-dark text-agri-green-dark font-extrabold text-sm px-5 py-3.5 rounded-xl transition-all flex items-center justify-center space-x-2 shadow-agri-sm touch-target min-h-[48px]"
+                onClick={() => setFarmerTab('queue')}
+                className="w-full bg-agri-gold hover:bg-agri-gold-dark text-agri-green-dark font-extrabold text-sm px-5 py-3.5 rounded-xl transition-all flex items-center justify-center space-x-2 shadow-agri-sm touch-target min-h-[48px] active:scale-95"
               >
-                <span>⏱ {t('ट्रैक करें', 'Track My Turn')}</span>
+                <Clock className="w-4 h-4" />
+                <span>{t('अपनी बारी का ट्रैक करें', 'Track My Turn')}</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
@@ -171,24 +176,26 @@ export const FarmerDashboard = () => {
           {/* CHECKED_IN State */}
           {isCheckedIn && (
             <div className="space-y-3 text-blue-100">
-              <div className="flex items-center justify-between border-b border-white/10 pb-3">
+              <div className="flex items-start justify-between border-b border-white/10 pb-3">
                 <div>
-                  <span className="text-[11px] text-blue-300 font-bold block">
-                    {t('गेट चेक-इन सत्यापित', 'Gate Check-in Verified')}
+                  <span className="text-xs text-blue-300 font-bold block">
+                    {t('गेट चेक-इन पूरा हुआ', 'Gate Check-in Verified')}
                   </span>
-                  <span className="font-heading font-extrabold text-3xl text-white font-mono">
+                  <span className="font-heading font-extrabold text-3xl text-white font-mono mt-0.5 block">
                     {activeBooking?.token}
                   </span>
                 </div>
-                <span className="bg-blue-500/30 text-blue-200 text-xs font-bold px-3 py-1 rounded-full border border-blue-400/40">
-                  ✓ {t('गेट एंट्री पास', 'Gate Verified')}
+                <span className="bg-blue-500/30 text-blue-200 text-xs font-bold px-3 py-1 rounded-full border border-blue-400/40 font-sans inline-flex items-center gap-1">
+                  <CheckCircle2 className="w-3 h-3 text-blue-300" />
+                  <span>Verified</span>
                 </span>
               </div>
               <button
                 onClick={() => setFarmerTab('queue')}
-                className="w-full bg-blue-400 hover:bg-blue-300 text-agri-green-dark font-extrabold text-xs px-5 py-3.5 rounded-xl transition-all flex items-center justify-center space-x-2 shadow-agri-sm touch-target min-h-[48px]"
+                className="w-full bg-blue-400 hover:bg-blue-300 text-agri-green-dark font-extrabold text-sm px-5 py-3.5 rounded-xl transition-all flex items-center justify-center space-x-2 shadow-agri-sm touch-target min-h-[48px]"
               >
-                <span>{t('कतार स्थिति देखें', 'View Queue Position')}</span>
+                <Clock className="w-4 h-4" />
+                <span>{t('अपनी बारी का ट्रैक करें', 'Track My Turn')}</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
@@ -196,116 +203,116 @@ export const FarmerDashboard = () => {
 
           {/* PROCESSING State */}
           {isProcessing && (
-            <div className="space-y-3 text-agri-green-dark">
-              <div className="flex items-center justify-between border-b border-agri-green-dark/20 pb-3">
+            <div className="space-y-3 text-agri-green-dark bg-agri-gold p-4 rounded-xl">
+              <div className="flex items-center justify-between border-b border-agri-green-dark/20 pb-2">
                 <div>
-                  <span className="text-[11px] font-extrabold text-agri-green-dark block">
-                    🔔 {t('आपकी बारी आ गई है!', 'Turn Arrived!')}
+                  <span className="text-xs font-extrabold block">
+                    {t('आपकी बारी आ गई है!', 'Your turn has arrived!')}
                   </span>
-                  <span className="font-heading font-extrabold text-3xl text-agri-green-dark font-mono">
+                  <span className="font-heading font-extrabold text-3xl font-mono mt-0.5 block">
                     #{activeBooking?.token}
                   </span>
                 </div>
-                <span className="bg-agri-green text-white text-xs font-extrabold px-3 py-1 rounded-full animate-bounce">
+                <span className="bg-agri-green text-white text-xs font-extrabold px-3 py-1 rounded-full animate-bounce font-sans">
                   {activeBooking?.counter || 'Counter 2'}
                 </span>
               </div>
               <button
                 onClick={() => setFarmerTab('queue')}
-                className="w-full bg-agri-green-dark hover:bg-agri-green text-white font-extrabold text-xs px-5 py-3.5 rounded-xl transition-all flex items-center justify-center space-x-2 shadow-agri-sm touch-target min-h-[48px]"
+                className="w-full bg-agri-green-dark hover:bg-agri-green text-white font-extrabold text-sm px-5 py-3.5 rounded-xl transition-all flex items-center justify-center space-x-2 shadow-agri-sm touch-target min-h-[48px]"
               >
-                <span>{t(`काउंटर ${activeBooking?.counter?.replace('Counter ', '') || '2'} पर जाएं`, `Proceed to ${activeBooking?.counter || 'Counter 2'}`)}</span>
+                <span>{t(`${activeBooking?.counter || 'काउंटर 2'} पर जाएं`, `Proceed to ${activeBooking?.counter || 'Counter 2'}`)}</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
           )}
 
-          {/* COMPLETED / DISBURSED State */}
+          {/* COMPLETED State */}
           {(isCompleted || isDisbursed) && (
             <div className="space-y-3 text-white">
               <div className="flex items-center justify-between border-b border-white/10 pb-3">
                 <div>
-                  <span className="text-[11px] text-agri-gold font-bold block">
-                    {isDisbursed
-                      ? t('भुगतान प्राप्त हुआ', 'Payment Received')
-                      : t('फसल तौल दर्ज', 'Procurement Logged')}
+                  <span className="text-xs text-agri-gold font-bold block">
+                    {isDisbursed ? t('भुगतान प्राप्त हुआ', 'Payment Disbursed') : t('फसल तौल पूरा हुआ', 'Crop Weighed & Logged')}
                   </span>
-                  <span className="font-heading font-extrabold text-2xl text-agri-gold font-mono">
-                    {isDisbursed
-                      ? '✓'
-                      : `${activeBooking?.actualQty || 38.5} Quintals`}
+                  <span className="font-heading font-extrabold text-2xl text-agri-gold font-sans mt-0.5 block">
+                    {activeBooking?.actualQty || 38.5} Quintals
                   </span>
                 </div>
-                <span className="bg-agri-gold/20 text-agri-gold text-xs font-bold px-3 py-1 rounded-full border border-agri-gold/30">
-                  {isDisbursed ? t('भुगतान हो गया', 'Paid') : 'DBT Pending'}
+                <span className="bg-agri-gold/20 text-agri-gold text-xs font-bold px-3 py-1 rounded-full border border-agri-gold/30 font-sans">
+                  {isDisbursed ? t('भुगतान पूरा', 'Disbursed') : 'DBT Pending'}
                 </span>
               </div>
               <button
                 onClick={() => setFarmerTab('history')}
-                className="w-full bg-agri-gold hover:bg-agri-gold-dark text-agri-green-dark font-extrabold text-xs px-5 py-3.5 rounded-xl transition-all flex items-center justify-center space-x-2 shadow-agri-sm touch-target min-h-[48px]"
+                className="w-full bg-agri-gold hover:bg-agri-gold-dark text-agri-green-dark font-extrabold text-sm px-5 py-3.5 rounded-xl transition-all flex items-center justify-center space-x-2 shadow-agri-sm touch-target min-h-[48px]"
               >
-                <span>{t('भुगतान रसीद देखें', 'View Payout Receipt')}</span>
+                <span>{t('भुगतान राशि देखें', 'View Payment')}</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
           )}
 
         </div>
-
-        {/* Merged Mandi Info + Directions (was a separate card) */}
-        <div className="flex items-center justify-between gap-3 pt-1">
-          <div className="min-w-0">
-            <span className="text-[10px] text-agri-ivory/70 font-bold block">
-              📍 {t('आपकी मंडी', 'Your Mandi')}
-            </span>
-            <p className="font-heading font-bold text-sm text-white truncate">
-              {bookedCentre.name}
-            </p>
-            <p className="text-[11px] text-agri-ivory/80 truncate">
-              <span className="font-mono text-agri-gold">{activeBooking?.slotTime || '11:00 AM – 11:30 AM'}</span>
-              <span className="mx-1.5 text-agri-ivory/50">·</span>
-              {bookedCentre.distanceKm} km
-            </p>
-          </div>
-
-          <a
-            href={`https://www.google.com/maps/dir/?api=1&destination=${bookedCentre.lat},${bookedCentre.lng}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={() => speakText('मानचित्र दिशा-निर्देश खोले जा रहे हैं', 'Opening Google Maps directions')}
-            className="bg-white/10 hover:bg-white/20 text-white border border-white/20 px-4 py-2.5 rounded-xl text-xs font-bold inline-flex items-center space-x-1.5 shrink-0 transition-all touch-target min-h-[44px]"
-          >
-            <Navigation className="w-4 h-4 text-agri-gold" />
-            <span>📍 {t('रास्ता देखें', 'Get Directions')}</span>
-          </a>
-        </div>
       </div>
 
-      {/* 3. QUICK ACTION SHORTCUTS — optional, hidden secondary info stays out of the way */}
-      <div className="grid grid-cols-3 gap-2.5 text-center">
-        <button
-          onClick={() => setFarmerTab('centres')}
-          className="bg-white rounded-xl p-3 border border-agri-ivory-muted shadow-sm hover:border-agri-gold transition-all touch-target min-h-[56px] flex flex-col items-center justify-center"
-        >
-          <MapPin className="w-5 h-5 text-agri-green mb-1" />
-          <span className="text-[11px] font-bold text-agri-text">{t('मंडी खोजें', 'Find Mandi')}</span>
-        </button>
+      {/* 3. YOUR BOOKING & WHAT HAPPENS NEXT */}
+      <div className="bg-white rounded-2xl p-4 sm:p-5 border border-agri-ivory-muted shadow-sm space-y-3 font-sans">
+        <h3 className="font-heading text-base font-bold text-agri-text flex items-center space-x-2">
+          <Clock className="w-5 h-5 text-agri-green shrink-0" />
+          <span>{t('आगे की प्रक्रिया', 'What happens next?')}</span>
+        </h3>
 
-        <button
-          onClick={() => setFarmerTab('queue')}
-          className="bg-white rounded-xl p-3 border border-agri-ivory-muted shadow-sm hover:border-agri-gold transition-all touch-target min-h-[56px] flex flex-col items-center justify-center"
-        >
-          <Clock className="w-5 h-5 text-agri-green mb-1" />
-          <span className="text-[11px] font-bold text-agri-text">{t('मेरी कतार', 'My Queue')}</span>
-        </button>
+        <div className="divide-y divide-agri-ivory-muted text-xs">
+          <div className="py-2.5 flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <span className="w-6 h-6 rounded-full bg-agri-green/10 text-agri-green font-bold flex items-center justify-center text-xs shrink-0">1</span>
+              <div>
+                <span className="font-bold text-agri-text block">{t('बारी का इंतजार', 'Wait for your turn')}</span>
+                <span className="text-[11px] text-agri-text-muted">{t('बुलावा आने तक इंतजार करें', 'Track queue status on phone')}</span>
+              </div>
+            </div>
+          </div>
 
-        <button
-          onClick={() => setFarmerTab('history')}
-          className="bg-white rounded-xl p-3 border border-agri-ivory-muted shadow-sm hover:border-agri-gold transition-all touch-target min-h-[56px] flex flex-col items-center justify-center"
-        >
-          <CheckCircle2 className="w-5 h-5 text-agri-green mb-1" />
-          <span className="text-[11px] font-bold text-agri-text">{t('भुगतान', 'Payments')}</span>
-        </button>
+          <div className="py-2.5 flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <span className="w-6 h-6 rounded-full bg-agri-green/10 text-agri-green font-bold flex items-center justify-center text-xs shrink-0">2</span>
+              <div>
+                <span className="font-bold text-agri-text block">{t('मंडी पहुंचें', 'Reach the mandi')}</span>
+                <span className="text-[11px] text-agri-text-muted">{t('बुलावा आने पर मंडी गेट आएं', 'Arrive at gate when called')}</span>
+              </div>
+            </div>
+            <a
+              href={`https://www.google.com/maps/dir/?api=1&destination=${bookedCentre.lat},${bookedCentre.lng}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs font-bold text-agri-green hover:underline shrink-0 inline-flex items-center gap-1"
+            >
+              <Navigation className="w-3.5 h-3.5 text-agri-green" />
+              <span>{t('रास्ता', 'Map')}</span>
+            </a>
+          </div>
+
+          <div className="py-2.5 flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <span className="w-6 h-6 rounded-full bg-agri-green/10 text-agri-green font-bold flex items-center justify-center text-xs shrink-0">3</span>
+              <div>
+                <span className="font-bold text-agri-text block">{t('पास दिखाएं', 'Show Mandi Pass')}</span>
+                <span className="text-[11px] text-agri-text-muted">{t('काउंटर पर अपना टोकन बताएं', 'Show token at counter')}</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="py-2.5 flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <span className="w-6 h-6 rounded-full bg-agri-green/10 text-agri-green font-bold flex items-center justify-center text-xs shrink-0">4</span>
+              <div>
+                <span className="font-bold text-agri-text block">{t('फसल का तौल', 'Weigh crop & get payout')}</span>
+                <span className="text-[11px] text-agri-text-muted">{t('वजन कराएं और बैंक खाते में भुगतान पाएं', 'Weighment & bank transfer')}</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
     </div>

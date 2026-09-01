@@ -40,17 +40,17 @@ export const OperatorDashboard = () => {
             </p>
           </div>
 
-          {/* Dynamic Operator Quick Control */}
-          <div className="bg-agri-surface/10 p-4 rounded-xl border border-white/20 text-right shrink-0">
-            <span className="text-[10px] text-agri-gold font-bold uppercase tracking-wider block font-mono">
-              DEMO WORKFLOW TRIGGER
+          {/* Refined Quick Action Control (Fix 3) */}
+          <div className="bg-white/10 p-3.5 rounded-xl border border-white/20 text-right shrink-0">
+            <span className="text-[10px] text-agri-gold font-bold uppercase tracking-wider block font-sans">
+              Quick Action
             </span>
 
             {/* If currently processing, show inspect trigger */}
             {currentProcessingItem ? (
               <button
                 onClick={() => setSelectedInspectionToken(currentProcessingItem)}
-                className="mt-2 bg-agri-green text-white hover:bg-agri-green-dark font-extrabold px-5 py-2.5 rounded-xl text-xs flex items-center space-x-2 transition-all shadow-md"
+                className="mt-1.5 bg-agri-green text-white hover:bg-agri-green-dark font-extrabold px-4 py-2 rounded-lg text-xs flex items-center space-x-2 transition-all shadow-sm"
               >
                 <Scale className="w-4 h-4 text-agri-gold" />
                 <span>INSPECT TOKEN ({currentProcessingItem.token})</span>
@@ -59,7 +59,7 @@ export const OperatorDashboard = () => {
               /* If a farmer is checked-in, call next to counter */
               <button
                 onClick={() => callNextFarmer(nextCheckedInItem.token, 'Counter 2')}
-                className="mt-2 bg-agri-gold hover:bg-agri-gold-dark text-agri-green-dark font-extrabold px-5 py-2.5 rounded-xl text-xs flex items-center space-x-2 transition-all shadow-md animate-pulse"
+                className="mt-1.5 bg-agri-gold hover:bg-agri-gold-dark text-agri-green-dark font-extrabold px-4 py-2 rounded-lg text-xs flex items-center space-x-2 transition-all shadow-sm animate-pulse"
               >
                 <PhoneCall className="w-4 h-4 fill-agri-green-dark" />
                 <span>CALL NEXT ({nextCheckedInItem.token})</span>
@@ -68,13 +68,13 @@ export const OperatorDashboard = () => {
               /* If farmer is waiting, prompt gate check in */
               <button
                 onClick={() => checkInFarmer(nextWaitingItem.token)}
-                className="mt-2 bg-agri-ivory text-agri-green-dark hover:bg-white font-extrabold px-5 py-2.5 rounded-xl text-xs flex items-center space-x-2 transition-all shadow-md"
+                className="mt-1.5 bg-agri-ivory text-agri-green-dark hover:bg-white font-extrabold px-4 py-2 rounded-lg text-xs flex items-center space-x-2 transition-all shadow-sm"
               >
                 <UserCheck className="w-4 h-4 text-agri-green" />
                 <span>CHECK IN GATE ({nextWaitingItem.token})</span>
               </button>
             ) : (
-              <span className="mt-2 inline-block text-xs text-agri-ivory-muted font-medium">
+              <span className="mt-1.5 inline-block text-xs text-agri-ivory-muted font-medium">
                 All bookings cleared for today
               </span>
             )}
@@ -82,41 +82,52 @@ export const OperatorDashboard = () => {
         </div>
       </div>
 
-      {/* Yard Queue Summary Strip */}
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-        <MetricCard
-          title="Total Bookings"
-          value={totalBookings}
-          subtitle="Scheduled today"
-          icon={Users}
-        />
-        <MetricCard
-          title="Waiting Gate"
-          value={waitingCount}
-          subtitle="In yard queue"
-          icon={Clock}
-        />
-        <MetricCard
-          title="Checked-In"
-          value={checkedInCount}
-          subtitle="Verified at entry"
-          icon={ShieldCheck}
-          highlight={checkedInCount > 0}
-        />
-        <MetricCard
-          title="Processing"
-          value={processingCount}
-          subtitle="At inspection counter"
-          icon={Scale}
-          highlight={processingCount > 0}
-        />
-        <MetricCard
-          title="Completed"
-          value={completedCount}
-          subtitle="Weighed & logged"
-          icon={CheckCircle2}
-          badgeText="Today"
-        />
+      {/* Yard Queue Operational Summary Strip (Fix 1) */}
+      <div className="bg-white rounded-xl p-4 border border-agri-ivory-muted shadow-sm font-sans">
+        <div className="text-xs font-bold text-agri-text-muted mb-2 font-sans flex items-center justify-between border-b border-agri-ivory-muted pb-1.5">
+          <span className="flex items-center gap-1.5">
+            <Activity className="w-3.5 h-3.5 text-agri-green" />
+            <span>Today's Yard Queue Summary</span>
+          </span>
+          <span className="text-[11px] font-normal text-agri-green">Sonipat Main Yard • Real-time Status</span>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 text-center divide-y sm:divide-y-0 sm:divide-x divide-agri-ivory-muted pt-1">
+          <div className="p-2">
+            <span className="text-[11px] text-agri-text-muted block font-sans">Total Scheduled</span>
+            <span className="font-heading text-xl font-extrabold text-agri-text font-sans block mt-0.5">
+              {totalBookings}
+            </span>
+          </div>
+
+          <div className="p-2">
+            <span className="text-[11px] text-agri-text-muted block font-sans">Waiting at Gate</span>
+            <span className="font-heading text-xl font-extrabold text-agri-text font-sans block mt-0.5">
+              {waitingCount}
+            </span>
+          </div>
+
+          <div className="p-2">
+            <span className="text-[11px] text-agri-text-muted block font-sans">Checked-In</span>
+            <span className={`font-heading text-xl font-extrabold font-sans block mt-0.5 ${checkedInCount > 0 ? 'text-blue-700 font-bold' : 'text-agri-text'}`}>
+              {checkedInCount}
+            </span>
+          </div>
+
+          <div className="p-2">
+            <span className="text-[11px] text-agri-text-muted block font-sans">At Inspection</span>
+            <span className={`font-heading text-xl font-extrabold font-sans block mt-0.5 ${processingCount > 0 ? 'text-amber-700 font-bold' : 'text-agri-text'}`}>
+              {processingCount}
+            </span>
+          </div>
+
+          <div className="p-2">
+            <span className="text-[11px] text-agri-text-muted block font-sans">Completed Today</span>
+            <span className="font-heading text-xl font-extrabold text-emerald-700 font-sans block mt-0.5">
+              {completedCount}
+            </span>
+          </div>
+        </div>
       </div>
 
       {/* DYNAMIC CURRENTLY PROCESSING SECTION */}

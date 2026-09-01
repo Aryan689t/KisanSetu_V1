@@ -11,11 +11,22 @@ import {
 const DemoContext = createContext();
 
 export const DemoProvider = ({ children }) => {
+  // Authentication & Public Flow State
+  // Default is false so visitor/judge lands on the Landing Page first
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [authScreen, setAuthScreen] = useState('landing'); // 'landing' | 'language' | 'login' | 'signup' | 'onboarding'
+  const [currentUser, setCurrentUser] = useState({
+    name: 'Ramesh Singh',
+    mobile: '+91 98765 43210',
+    role: 'farmer'
+  });
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
   // Navigation & Role State
-  const [activeRole, setActiveRole] = useState('farmer'); // 'farmer' | 'operator' | 'admin'
+  const [activeRole, setActiveRoleState] = useState('farmer'); // 'farmer' | 'operator' | 'admin'
   const [farmerTab, setFarmerTab] = useState('dashboard'); // 'dashboard' | 'centres' | 'queue' | 'history'
 
-  // Language & Audio Assistance Accessibility State
+  // Language & Onboarding State (Strictly English & Hindi)
   const [lang, setLang] = useState('en'); // 'en' | 'hi'
   const [isAudioActive, setIsAudioActive] = useState(false);
 
@@ -47,19 +58,6 @@ export const DemoProvider = ({ children }) => {
     }
   });
 
-  // Web Speech Synthesis Helper
-  const speakText = (textHi, textEn) => {
-    if (!('speechSynthesis' in window)) return;
-    window.speechSynthesis.cancel(); // stop prior speech
-    const textToSpeak = lang === 'hi' ? textHi || textEn : textEn || textHi;
-    if (!textToSpeak) return;
-
-    const utterance = new SpeechSynthesisUtterance(textToSpeak);
-    utterance.lang = lang === 'hi' ? 'hi-IN' : 'en-IN';
-    utterance.rate = 0.9; // clear, comfortable pace for farmers
-    window.speechSynthesis.speak(utterance);
-  };
-
   // Application Data State
   const [centres, setCentres] = useState(initialCentres);
   const [crops] = useState(initialCrops);
@@ -76,6 +74,57 @@ export const DemoProvider = ({ children }) => {
 
   // Active Selected Booking (Ramesh Singh's Token SNP-014 by default)
   const activeBooking = queueItems.find(q => q.token === 'SNP-014') || queueItems[3];
+
+  // Helper to switch role directly (used by demo bar and auth)
+  const setActiveRole = (role) => {
+    setActiveRoleState(role);
+    setIsAuthenticated(true);
+    if (role === 'farmer') {
+      setCurrentUser({ name: 'Ramesh Singh', mobile: '+91 98765 43210', role: 'farmer' });
+    } else if (role === 'operator') {
+      setCurrentUser({ name: 'Operator #4 (Gate Control)', mobile: '+91 98000 00001', role: 'operator' });
+    } else {
+      setCurrentUser({ name: 'State Supervisor (DoCA)', mobile: '+91 98000 00002', role: 'admin' });
+    }
+  };
+
+  // Auth Action: Log In
+  const loginUser = (role = 'farmer', profile = null) => {
+    setIsAuthenticated(true);
+    setActiveRoleState(role);
+    if (profile) {
+      setCurrentUser(profile);
+    } else if (role === 'farmer') {
+      setCurrentUser({ name: 'Ramesh Singh', mobile: '+91 98765 43210', role: 'farmer' });
+    } else if (role === 'operator') {
+      setCurrentUser({ name: 'Operator #4 (Gate Control)', mobile: '+91 98000 00001', role: 'operator' });
+    } else {
+      setCurrentUser({ name: 'State Supervisor (DoCA)', mobile: '+91 98000 00002', role: 'admin' });
+    }
+    setAuthScreen('landing');
+  };
+
+  // Auth Action: Register
+  const registerUser = ({ name, mobile, preferredLang }) => {
+    if (preferredLang) setLang(preferredLang);
+    setCurrentUser({
+      name: name || 'Ramesh Singh',
+      mobile: mobile || '+91 98765 43210',
+      role: 'farmer'
+    });
+    setIsAuthenticated(true);
+    setActiveRoleState('farmer');
+    // Go to first-time farmer onboarding tutorial
+    setAuthScreen('onboarding');
+  };
+
+  // Auth Action: Log Out
+  const logoutUser = () => {
+    setIsAuthenticated(false);
+    setAuthScreen('landing');
+    setIsSettingsOpen(false);
+    setIsOnboardingOpen(false);
+  };
 
   // Helper to add notification
   const addNotification = (title, message, type = 'info', forRole = 'farmer') => {
@@ -197,9 +246,8 @@ export const DemoProvider = ({ children }) => {
     
     const newBooking = {
       token: newTokenNum,
-      farmerName: 'Ramesh Singh (YOU)',
-      mobile: '+91 98765 43210',
-      aadhaarLast4: '4821',
+      farmerName: currentUser.name ? `${currentUser.name} (YOU)` : 'Ramesh Singh (YOU)',
+      mobile: currentUser.mobile || '+91 98765 43210',
       crop: cropName || 'Paddy (Grade A)',
       expectedQty: Number(expectedQty) || 40,
       actualQty: null,
@@ -405,6 +453,17 @@ export const DemoProvider = ({ children }) => {
   return (
     <DemoContext.Provider
       value={{
+        isAuthenticated,
+        setIsAuthenticated,
+        authScreen,
+        setAuthScreen,
+        currentUser,
+        setCurrentUser,
+        isSettingsOpen,
+        setIsSettingsOpen,
+        loginUser,
+        registerUser,
+        logoutUser,
         activeRole,
         setActiveRole,
         farmerTab,
@@ -433,7 +492,6 @@ export const DemoProvider = ({ children }) => {
         setLang,
         isAudioActive,
         setIsAudioActive,
-        speakText,
         isOnboardingOpen,
         setIsOnboardingOpen,
         onboardingStep,

@@ -103,23 +103,21 @@ export const OnboardingModal = () => {
         {/* Close Button (only allow skipping on walkthrough) */}
         <button
           onClick={() => {
-            if (step === 3) { finishWalkthrough(); }
-            else { setIsOnboardingOpen(false); }
+            if (step === 3) finishWalkthrough();
+            else setIsOnboardingOpen(false);
           }}
-          className="absolute top-4 right-4 p-2 text-agri-text-muted hover:text-agri-text rounded-full hover:bg-agri-ivory z-10"
+          className="absolute top-4 right-4 p-2 text-agri-text-muted hover:text-agri-text rounded-full hover:bg-agri-ivory transition-colors"
+          title="Close / Skip"
         >
           <X className="w-5 h-5" />
         </button>
 
         {/* Step Indicator */}
-        <div className="flex items-center space-x-2 text-xs font-bold text-agri-green pr-8">
-          <span className="w-6 h-6 rounded-full bg-agri-green text-white flex items-center justify-center font-mono">
+        <div className="flex items-center space-x-2 text-xs font-bold text-agri-green">
+          <span className="w-6 h-6 rounded-full bg-agri-green text-white flex items-center justify-center font-mono text-xs">
             {step}
           </span>
           <span>{stepLabel()}</span>
-          <span className="ml-auto text-[10px] text-agri-text-muted font-normal">
-            {t('of 3', 'में से 3')}
-          </span>
         </div>
 
         {/* STEP 1: CHOOSE LANGUAGE */}
@@ -130,7 +128,7 @@ export const OnboardingModal = () => {
                 Namaste! Welcome to KisanSetu
               </h2>
               <p className="text-sm text-agri-text-muted">
-                {t('Choose your preferred language', 'अपनी भाषा का चयन करें')}
+                अपनी भाषा का चयन करें / Choose your preferred language
               </p>
             </div>
 
@@ -138,7 +136,7 @@ export const OnboardingModal = () => {
               <button
                 onClick={() => {
                   setLang('hi');
-                  speakText('हिंदी भाषा चुनी गई है।', 'Hindi language selected.');
+                  speakText('नमस्ते! किसान सेतु में आपका स्वागत है', 'Welcome to KisanSetu');
                 }}
                 className={`p-4 rounded-xl border-2 text-center transition-all ${
                   lang === 'hi'
@@ -154,7 +152,7 @@ export const OnboardingModal = () => {
               <button
                 onClick={() => {
                   setLang('en');
-                  speakText('English language selected.', 'English language selected.');
+                  speakText('Language changed to English', 'Welcome to KisanSetu');
                 }}
                 className={`p-4 rounded-xl border-2 text-center transition-all ${
                   lang === 'en'
@@ -355,7 +353,6 @@ export const OnboardingModal = () => {
                     >
                       <PathIcon className="w-4 h-4" />
                     </span>
-                    {/* connector handled by flex spacing */}
                   </div>
                 );
               })}
@@ -376,10 +373,12 @@ export const OnboardingModal = () => {
                 <button
                   onClick={() => {
                     setWalkStep(walkStep + 1);
-                    speakText(
-                      WALKTHROUGH_STEPS[walkStep + 1].titleHi,
-                      WALKTHROUGH_STEPS[walkStep + 1].titleEn
-                    );
+                    if (speakText) {
+                      speakText(
+                        WALKTHROUGH_STEPS[walkStep + 1].titleHi,
+                        WALKTHROUGH_STEPS[walkStep + 1].titleEn
+                      );
+                    }
                   }}
                   className="flex-1 bg-agri-green hover:bg-agri-green-dark text-white font-extrabold py-3 rounded-xl transition-all shadow-md touch-target min-h-[48px] flex items-center justify-center space-x-2"
                 >
@@ -389,7 +388,7 @@ export const OnboardingModal = () => {
               ) : (
                 <button
                   onClick={() => {
-                    speakText('अब आप तैयार हैं', 'You are all set now');
+                    if (speakText) speakText('अब आप तैयार हैं', 'You are all set now');
                     finishWalkthrough();
                   }}
                   className="flex-1 bg-agri-gold hover:bg-agri-gold-dark text-agri-green-dark font-extrabold py-3 rounded-xl transition-all shadow-md touch-target min-h-[48px]"
