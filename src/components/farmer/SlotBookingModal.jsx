@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useDemo } from '../../context/DemoContext';
-import { X, Calendar, Clock, Wheat, CheckCircle2, ShieldCheck } from 'lucide-react';
+import { X, Wheat, CheckCircle2 } from 'lucide-react';
 
 export const SlotBookingModal = ({ centre, onClose }) => {
   const { crops, timeSlots, bookSlot } = useDemo();

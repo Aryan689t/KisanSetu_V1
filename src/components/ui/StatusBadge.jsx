@@ -1,4 +1,3 @@
-import React from 'react';
 
 export const StatusBadge = ({ status, type = 'centre' }) => {
   let label = status;

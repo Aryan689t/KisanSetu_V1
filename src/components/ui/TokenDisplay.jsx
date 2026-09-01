@@ -1,11 +1,11 @@
-import React from 'react';
-import { Wheat, MapPin, Clock, CheckCircle2, Navigation, ArrowRight, User } from 'lucide-react';
+import { useState } from 'react';
+import { Clock, Navigation, CheckCircle2 } from 'lucide-react';
 import { StatusBadge } from './StatusBadge';
 import { useDemo } from '../../context/DemoContext';
 
 export const TokenDisplay = ({ booking, onLiveQueueClick }) => {
   const { centres, lang } = useDemo();
-  const [showDetails, setShowDetails] = React.useState(false);
+  const [showDetails, setShowDetails] = useState(false);
 
   if (!booking) return null;
 

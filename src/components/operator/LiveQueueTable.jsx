@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useDemo } from '../../context/DemoContext';
 import { UserCheck, PhoneCall, Scale, CheckCircle2 } from 'lucide-react';
 import { StatusBadge } from '../ui/StatusBadge';

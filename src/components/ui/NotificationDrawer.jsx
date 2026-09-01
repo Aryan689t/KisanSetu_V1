@@ -1,4 +1,3 @@
-import React from 'react';
 import { useDemo } from '../../context/DemoContext';
 import { X, Bell, CheckCircle2, Info, AlertTriangle, Check } from 'lucide-react';
 
@@ -52,16 +51,13 @@ export const NotificationDrawer = ({ isOpen, onClose }) => {
             filteredNotifs.map((notif) => {
               let icon = <Info className="w-4 h-4 text-blue-600" />;
               let border = 'border-l-4 border-blue-600';
-              let bg = 'bg-blue-50/50';
 
               if (notif.type === 'success') {
                 icon = <CheckCircle2 className="w-4 h-4 text-agri-status-success" />;
                 border = 'border-l-4 border-agri-status-success';
-                bg = 'bg-agri-green-soft/60';
               } else if (notif.type === 'warning') {
                 icon = <AlertTriangle className="w-4 h-4 text-agri-status-warning" />;
                 border = 'border-l-4 border-agri-status-warning';
-                bg = 'bg-amber-50/80';
               }
 
               return (

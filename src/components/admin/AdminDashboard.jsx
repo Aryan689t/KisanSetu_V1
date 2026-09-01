@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { useDemo } from '../../context/DemoContext';
+import { useState } from 'react';
 import { ShieldCheck, Building2, Users, Scale, IndianRupee, Activity } from 'lucide-react';
 import { MetricCard } from '../ui/MetricCard';
 import { CentreLoadBar } from './CentreLoadBar';
@@ -9,7 +8,6 @@ import { AnalyticsCharts } from './AnalyticsCharts';
 import { CentreDetailModal } from './CentreDetailModal';
 
 export const AdminDashboard = () => {
-  const { queueItems } = useDemo();
   const [selectedCentre, setSelectedCentre] = useState(null);
   const [activeSection, setActiveSection] = useState('overview');
 

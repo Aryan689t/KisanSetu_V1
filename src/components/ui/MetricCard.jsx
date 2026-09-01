@@ -1,4 +1,3 @@
-import React from 'react';
 
 export const MetricCard = ({ title, value, subtitle, icon: Icon, highlight = false, badgeText }) => {
   return (

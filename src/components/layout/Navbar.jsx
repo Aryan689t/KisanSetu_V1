@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useDemo } from '../../context/DemoContext';
-import { Bell, Wheat, LayoutDashboard, MapPin, Clock, ReceiptText, Settings, User } from 'lucide-react';
+import { Bell, Wheat, LayoutDashboard, MapPin, Clock, ReceiptText, Settings, Volume2, HelpCircle } from 'lucide-react';
 import { NotificationDrawer } from '../ui/NotificationDrawer';
 import { FarmerMobileNav } from './FarmerMobileNav';
 import { FarmerSettingsModal } from '../farmer/FarmerSettingsModal';
@@ -14,7 +14,9 @@ export const Navbar = () => {
     lang,
     setLang,
     currentUser,
-    setIsSettingsOpen
+    setIsSettingsOpen,
+    isAudioActive,
+    setIsAudioActive
   } = useDemo();
   const [isNotifOpen, setIsNotifOpen] = useState(false);
 
@@ -181,4 +183,3 @@ export const Navbar = () => {
     </>
   );
 };
-

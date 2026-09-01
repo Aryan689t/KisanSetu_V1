@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useDemo } from '../../context/DemoContext';
-import { X, Scale, ShieldCheck, CheckCircle2, Calculator, AlertTriangle, Building2 } from 'lucide-react';
+import { X, CheckCircle2, Calculator } from 'lucide-react';
 
 export const ActiveProcurementModal = ({ tokenItem, onClose }) => {
   const { completeProcurement } = useDemo();

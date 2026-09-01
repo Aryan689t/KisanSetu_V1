@@ -1,4 +1,3 @@
-import React from 'react';
 import { X, Building2, Users, Clock, Scale, AlertTriangle, ShieldCheck, MapPin, Activity, CheckCircle2 } from 'lucide-react';
 import { StatusBadge } from '../ui/StatusBadge';
 
