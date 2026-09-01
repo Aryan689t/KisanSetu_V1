@@ -35,6 +35,8 @@ export default [
       ...js.configs.recommended.rules,
       ...reactHooks.configs.recommended.rules,
       'react/react-in-jsx-scope': 'off',
+      'react/jsx-uses-react': 'off',
+      'react/jsx-uses-vars': 'error',
       'no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
       'react/prop-types': 'off'
     },
