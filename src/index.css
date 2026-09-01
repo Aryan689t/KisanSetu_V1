@@ -21,7 +21,6 @@
   background-image: radial-gradient(#245C3A 0.4px, transparent 0.4px), radial-gradient(#245C3A 0.4px, #F6F2E8 0.4px);
   background-size: 16px 16px;
   background-position: 0 0, 8px 8px;
-  background-opacity: 0.03;
 }
 
 .bg-field-pattern {
@@ -30,8 +29,31 @@
 
 .paper-surface {
   background-color: #FFFDF7;
-  border: 1px solid #E5E0D5;
-  box-shadow: 0 2px 8px rgba(36, 49, 38, 0.03);
+  border: 1px solid #EAE4D8;
+  box-shadow: 0 1px 3px rgba(36, 49, 38, 0.04), 0 4px 12px rgba(36, 49, 38, 0.02);
+}
+
+.paper-card {
+  background-color: #FFFDF7;
+  border: 1px solid #EAE4D8;
+  border-radius: 1rem; /* 16px */
+  box-shadow: 0 1px 3px rgba(36, 49, 38, 0.04);
+  transition: all 0.2s ease-in-out;
+}
+
+.paper-card:hover {
+  border-color: #D0C6B4;
+  box-shadow: 0 4px 12px rgba(36, 49, 38, 0.06);
+}
+
+/* Touch Target Minimum (44px) */
+.touch-target {
+  min-height: 44px;
+}
+
+/* Mobile Safe Bottom Padding for Sticky Bottom Bar */
+.pb-mobile-nav {
+  padding-bottom: 5.25rem; /* 84px to prevent bottom nav overlay */
 }
 
 /* Custom Scrollbar for Agricultural Theme */
@@ -52,3 +74,4 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #245C3A;
 }
+

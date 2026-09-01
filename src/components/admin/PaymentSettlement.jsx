@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDemo } from '../../context/DemoContext';
-import { ShieldCheck, CheckCircle2, Calculator, Building, Play, ArrowRight, Clock, FileCheck } from 'lucide-react';
+import { ShieldCheck, CheckCircle2, Calculator, Building, FileCheck } from 'lucide-react';
 import { StatusBadge } from '../ui/StatusBadge';
 
 export const PaymentSettlement = () => {
@@ -19,7 +19,7 @@ export const PaymentSettlement = () => {
         <div className="flex items-center space-x-2.5">
           <ShieldCheck className="w-5 h-5 text-agri-gold shrink-0" />
           <div>
-            <h3 className="font-heading font-bold text-base text-white">
+            <h3 className="font-heading font-bold text-sm sm:text-base text-white">
               Pending Settlements & Direct Benefit Transfer (DBT) Audit Trail
             </h3>
             <p className="text-xs text-agri-ivory/80">
@@ -27,8 +27,8 @@ export const PaymentSettlement = () => {
             </p>
           </div>
         </div>
-        <span className="text-[10px] text-agri-gold font-mono uppercase tracking-wider bg-agri-green/60 px-2.5 py-1 rounded border border-agri-gold/30">
-          PFMS & National Mandi Grid Sync
+        <span className="text-[10px] text-agri-gold font-mono uppercase tracking-wider bg-agri-green/60 px-2.5 py-1 rounded border border-agri-gold/30 shrink-0">
+          PFMS Grid Sync
         </span>
       </div>
 
@@ -42,8 +42,68 @@ export const PaymentSettlement = () => {
         </div>
       </div>
 
-      {/* Settlements Table */}
-      <div className="overflow-x-auto">
+      {/* MOBILE SETTLEMENT CARDS (< 768px) */}
+      <div className="md:hidden divide-y divide-agri-ivory-muted p-3 space-y-3">
+        {pendingDisbursalItems.map((item) => {
+          const isDisbursed = item.paymentStatus === 'DISBURSED';
+          const isTargetDemo = item.token === 'SNP-014';
+          const qty = item.actualQty || 38.5;
+          const rate = item.ratePerQuintal || 2200;
+          const totalAmount = item.totalAmount || Math.round(qty * rate);
+
+          return (
+            <div
+              key={item.token}
+              className={`p-3.5 rounded-xl border space-y-2.5 ${
+                isTargetDemo ? 'bg-agri-gold-light/10 border-agri-gold' : 'bg-[#FFFDF7] border-agri-ivory-muted'
+              }`}
+            >
+              <div className="flex items-center justify-between gap-2 pb-2 border-b border-agri-ivory-muted">
+                <div>
+                  <span className="font-mono font-extrabold text-base text-agri-green">{item.token}</span>
+                  <p className="font-bold text-xs text-agri-text">{item.farmerName}</p>
+                </div>
+                <StatusBadge status={item.paymentStatus} type="payment" />
+              </div>
+
+              <div className="text-xs space-y-1">
+                <div className="flex justify-between">
+                  <span className="text-agri-text-muted">Formula:</span>
+                  <span className="font-mono font-bold text-agri-green">{qty} qtl × ₹{rate}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-agri-text-muted">Total Disbursed:</span>
+                  <span className="font-mono font-extrabold text-agri-text text-sm">₹{totalAmount.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-agri-text-muted">DBT Bank:</span>
+                  <span className="font-mono text-agri-text">SBI ****4092</span>
+                </div>
+              </div>
+
+              <div className="pt-2 border-t border-agri-ivory-muted">
+                {!isDisbursed ? (
+                  <button
+                    onClick={() => disbursePayment(item.token)}
+                    className="w-full bg-agri-green hover:bg-agri-green-dark text-white font-bold py-2.5 rounded-xl text-xs flex items-center justify-center space-x-1.5 transition-all shadow-sm touch-target"
+                  >
+                    <FileCheck className="w-4 h-4 text-agri-gold" />
+                    <span>Authorize Settlement</span>
+                  </button>
+                ) : (
+                  <span className="w-full text-agri-status-success font-bold text-xs flex items-center justify-center space-x-1 bg-agri-green-soft py-2 rounded-lg border border-agri-green-border">
+                    <CheckCircle2 className="w-4 h-4" />
+                    <span>Settlement Disbursed</span>
+                  </span>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* DESKTOP SETTLEMENTS TABLE (>= 768px) */}
+      <div className="hidden md:block overflow-x-auto">
         <table className="w-full text-left text-xs">
           <thead className="bg-agri-ivory border-b border-agri-ivory-muted uppercase text-[10px] text-agri-text-muted font-heading tracking-wider">
             <tr>
@@ -94,7 +154,7 @@ export const PaymentSettlement = () => {
                     <div className="font-bold text-agri-text">
                       {item.qualityGrade || 'Grade A'}
                     </div>
-                    <span className="text-[10px] text-agri-text-muted">
+                    <span className="text-[10px] text-agri-text-muted font-mono">
                       Moisture: {item.moisturePercent || 12.4}%
                     </span>
                   </td>
@@ -109,7 +169,7 @@ export const PaymentSettlement = () => {
 
                   {/* Bank Account */}
                   <td className="py-3.5 px-4">
-                    <div className="font-bold text-agri-text flex items-center space-x-1">
+                    <div className="font-bold text-agri-text flex items-center space-x-1 font-mono">
                       <Building className="w-3.5 h-3.5 text-agri-green" />
                       <span>SBI ****4092</span>
                     </div>
@@ -126,7 +186,7 @@ export const PaymentSettlement = () => {
                     {!isDisbursed ? (
                       <button
                         onClick={() => disbursePayment(item.token)}
-                        className="bg-agri-green hover:bg-agri-green-dark text-white font-bold px-3 py-1.5 rounded-lg text-[11px] inline-flex items-center space-x-1.5 transition-all shadow-agri-sm hover:scale-[1.02]"
+                        className="bg-agri-green hover:bg-agri-green-dark text-white font-bold px-3 py-1.5 rounded-lg text-[11px] inline-flex items-center space-x-1.5 transition-all shadow-agri-sm hover:scale-[1.02] touch-target"
                         title="Authorize payout settlement for this completed procurement"
                       >
                         <FileCheck className="w-3.5 h-3.5 text-agri-gold" />
@@ -155,7 +215,7 @@ export const PaymentSettlement = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-2 text-xs">
           <div className="p-2.5 bg-[#FFFDF7] rounded-lg border border-agri-ivory-muted flex items-center space-x-2">
-            <div className="w-6 h-6 rounded-full bg-agri-green text-white font-bold text-xs flex items-center justify-center shrink-0">
+            <div className="w-6 h-6 rounded-full bg-agri-green text-white font-bold text-xs flex items-center justify-center shrink-0 font-mono">
               1
             </div>
             <div>
@@ -165,7 +225,7 @@ export const PaymentSettlement = () => {
           </div>
 
           <div className="p-2.5 bg-[#FFFDF7] rounded-lg border border-agri-ivory-muted flex items-center space-x-2">
-            <div className="w-6 h-6 rounded-full bg-agri-gold-dark text-white font-bold text-xs flex items-center justify-center shrink-0">
+            <div className="w-6 h-6 rounded-full bg-agri-gold-dark text-white font-bold text-xs flex items-center justify-center shrink-0 font-mono">
               2
             </div>
             <div>
@@ -175,7 +235,7 @@ export const PaymentSettlement = () => {
           </div>
 
           <div className="p-2.5 bg-[#FFFDF7] rounded-lg border border-agri-ivory-muted flex items-center space-x-2">
-            <div className="w-6 h-6 rounded-full bg-agri-green text-white font-bold text-xs flex items-center justify-center shrink-0">
+            <div className="w-6 h-6 rounded-full bg-agri-green text-white font-bold text-xs flex items-center justify-center shrink-0 font-mono">
               3
             </div>
             <div>
@@ -185,7 +245,7 @@ export const PaymentSettlement = () => {
           </div>
 
           <div className="p-2.5 bg-[#FFFDF7] rounded-lg border border-agri-ivory-muted flex items-center space-x-2">
-            <div className="w-6 h-6 rounded-full bg-agri-status-success text-white font-bold text-xs flex items-center justify-center shrink-0">
+            <div className="w-6 h-6 rounded-full bg-agri-status-success text-white font-bold text-xs flex items-center justify-center shrink-0 font-mono">
               4
             </div>
             <div>
@@ -199,3 +259,4 @@ export const PaymentSettlement = () => {
     </div>
   );
 };
+

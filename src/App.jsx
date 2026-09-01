@@ -14,7 +14,7 @@ const MainContent = () => {
   const { activeRole, farmerTab } = useDemo();
 
   return (
-    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+    <main className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 flex-1 w-full ${activeRole === 'farmer' ? 'pb-24 md:pb-8' : ''}`}>
       {activeRole === 'farmer' && (
         <>
           {farmerTab === 'dashboard' && <FarmerDashboard />}
