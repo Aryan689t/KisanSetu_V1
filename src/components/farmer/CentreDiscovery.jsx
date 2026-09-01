@@ -4,16 +4,13 @@ import { MapPin, Clock, Calendar, Search, CheckCircle2, Navigation, HelpCircle, 
 import { SlotBookingModal } from './SlotBookingModal';
 
 const DirectionsButton = ({ centre, style = 'outline' }) => {
-  const { lang, speakText } = useDemo();
+  const { lang } = useDemo();
   const t = (hi, en) => (lang === 'hi' ? hi : en);
   return (
     <a
       href={`https://www.google.com/maps/dir/?api=1&destination=${centre.lat},${centre.lng}`}
       target="_blank"
       rel="noopener noreferrer"
-      onClick={() => {
-        if (speakText) speakText('मानचित्र दिशा-निर्देश खोले जा रहे हैं', 'Opening directions');
-      }}
       className={`rounded-xl text-xs font-bold inline-flex items-center justify-center space-x-1.5 touch-target min-h-[44px] transition-all font-sans ${
         style === 'solid'
           ? 'bg-white/10 hover:bg-white/20 text-white border border-white/20'
@@ -27,7 +24,7 @@ const DirectionsButton = ({ centre, style = 'outline' }) => {
 };
 
 export const CentreDiscovery = () => {
-  const { centres, getRecommendedCentre, activeBooking, setFarmerTab, lang, speakText } = useDemo();
+  const { centres, getRecommendedCentre, activeBooking, setFarmerTab, lang } = useDemo();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCentre, setSelectedCentre] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -108,11 +105,7 @@ export const CentreDiscovery = () => {
         {/* Rationale Toggle */}
         <div>
           <button
-            onClick={() => {
-              const next = !showWhyHero;
-              setShowWhyHero(next);
-              if (next && speakText) speakText('यह मंडी क्यों सुझाई गई है देखें', 'See why this mandi is recommended');
-            }}
+            onClick={() => setShowWhyHero(!showWhyHero)}
             className="text-xs font-bold text-amber-300 hover:text-amber-200 inline-flex items-center space-x-1.5 touch-target min-h-[36px] font-sans"
           >
             <HelpCircle className="w-4 h-4 text-agri-gold" />

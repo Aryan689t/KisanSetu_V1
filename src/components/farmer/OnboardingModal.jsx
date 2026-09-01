@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useDemo } from '../../context/DemoContext';
-import { Volume2, CheckCircle2, UserCheck, Cpu, ShieldCheck, ArrowRight, X, Calendar, Ticket, Clock, MapPin, Scale, Wallet } from 'lucide-react';
+import { CheckCircle2, UserCheck, Cpu, ShieldCheck, ArrowRight, X, Calendar, Ticket, Clock, MapPin, Scale, Wallet } from 'lucide-react';
 
 const WALKTHROUGH_STEPS = [
   {
@@ -61,8 +61,8 @@ const WALKTHROUGH_STEPS = [
 
 export const OnboardingModal = () => {
   const {
-    lang, setLang, isAudioActive, setIsAudioActive, setActiveRole,
-    isOnboardingOpen, setIsOnboardingOpen, speakText,
+    lang, setLang, setActiveRole,
+    isOnboardingOpen, setIsOnboardingOpen,
     onboardingStep: step, setOnboardingStep: setStep,
     onboardingWalkStep: walkStep, setOnboardingWalkStep: setWalkStep,
     hasSeenWalkthrough, setHasSeenWalkthrough, openOnboarding
@@ -134,10 +134,7 @@ export const OnboardingModal = () => {
 
             <div className="grid grid-cols-2 gap-3 pt-2">
               <button
-                onClick={() => {
-                  setLang('hi');
-                  speakText('नमस्ते! किसान सेतु में आपका स्वागत है', 'Welcome to KisanSetu');
-                }}
+                onClick={() => setLang('hi')}
                 className={`p-4 rounded-xl border-2 text-center transition-all ${
                   lang === 'hi'
                     ? 'border-agri-green bg-agri-green-soft text-agri-green-dark font-extrabold shadow-sm'
@@ -150,10 +147,7 @@ export const OnboardingModal = () => {
               </button>
 
               <button
-                onClick={() => {
-                  setLang('en');
-                  speakText('Language changed to English', 'Welcome to KisanSetu');
-                }}
+                onClick={() => setLang('en')}
                 className={`p-4 rounded-xl border-2 text-center transition-all ${
                   lang === 'en'
                     ? 'border-agri-green bg-agri-green-soft text-agri-green-dark font-extrabold shadow-sm'
@@ -166,33 +160,8 @@ export const OnboardingModal = () => {
               </button>
             </div>
 
-            {/* Audio Assistance Toggle */}
-            <div className="p-3.5 rounded-xl bg-agri-ivory border border-agri-gold/40 flex items-center justify-between gap-3">
-              <div className="flex items-center space-x-2.5">
-                <Volume2 className="w-5 h-5 text-agri-gold-dark shrink-0" />
-                <div className="text-xs">
-                  <strong className="font-bold block text-agri-text">
-                    {t('Voice Audio Assistance', 'बोलकर सहायता')}
-                  </strong>
-                  <span className="text-agri-text-muted text-[11px]">
-                    {t('Read important prompts out loud', 'ज़रूरी निर्देश बोलकर सुनाए जाएंगे')}
-                  </span>
-                </div>
-              </div>
-
-              <input
-                type="checkbox"
-                checked={isAudioActive}
-                onChange={(e) => {
-                  setIsAudioActive(e.target.checked);
-                  if (e.target.checked) speakText('आवाज से सहायता चालू की गई है', 'Voice audio guidance activated');
-                }}
-                className="w-5 h-5 accent-agri-green rounded"
-              />
-            </div>
-
             <button
-              onClick={() => { setStep(2); speakText('अगला चरण', 'Next step'); }}
+              onClick={() => setStep(2)}
               className="w-full bg-agri-green hover:bg-agri-green-dark text-white font-extrabold py-3.5 rounded-xl transition-all flex items-center justify-center space-x-2 shadow-md touch-target min-h-[48px]"
             >
               <span>{t('Next Step', 'आगे बढ़ें')}</span>
@@ -371,15 +340,7 @@ export const OnboardingModal = () => {
 
               {walkStep < WALKTHROUGH_STEPS.length - 1 ? (
                 <button
-                  onClick={() => {
-                    setWalkStep(walkStep + 1);
-                    if (speakText) {
-                      speakText(
-                        WALKTHROUGH_STEPS[walkStep + 1].titleHi,
-                        WALKTHROUGH_STEPS[walkStep + 1].titleEn
-                      );
-                    }
-                  }}
+                  onClick={() => setWalkStep(walkStep + 1)}
                   className="flex-1 bg-agri-green hover:bg-agri-green-dark text-white font-extrabold py-3 rounded-xl transition-all shadow-md touch-target min-h-[48px] flex items-center justify-center space-x-2"
                 >
                   <span>{t('Next', 'आगे')}</span>
@@ -387,10 +348,7 @@ export const OnboardingModal = () => {
                 </button>
               ) : (
                 <button
-                  onClick={() => {
-                    if (speakText) speakText('अब आप तैयार हैं', 'You are all set now');
-                    finishWalkthrough();
-                  }}
+                  onClick={() => finishWalkthrough()}
                   className="flex-1 bg-agri-gold hover:bg-agri-gold-dark text-agri-green-dark font-extrabold py-3 rounded-xl transition-all shadow-md touch-target min-h-[48px]"
                 >
                   ✓ {t('I Understand, Start', 'समझ गया, शुरू करें')}

@@ -42,7 +42,7 @@ export const TokenDisplay = ({ booking, onLiveQueueClick }) => {
           {booking.token}
         </div>
         <span className="text-xs text-agri-text-muted block font-medium font-sans">
-          {booking.centreName || currentCentre.name} • Slot {booking.slotTime || '11:00 AM – 11:30 AM'}
+          {booking.centreName || currentCentre.name} • {lang === 'hi' ? 'स्लॉट' : 'Slot'} {booking.slotTime || '11:00 AM – 11:30 AM'}
         </span>
       </div>
 
@@ -57,7 +57,7 @@ export const TokenDisplay = ({ booking, onLiveQueueClick }) => {
         <div className="bg-agri-ivory/60 p-2.5 rounded-xl border border-agri-ivory-muted">
           <span className="text-[11px] text-agri-text-muted block font-sans">{lang === 'hi' ? 'अनुमानित समय' : 'Estimated wait'}</span>
           <p className="font-heading text-lg font-extrabold text-agri-gold-dark font-sans mt-0.5">
-            {booking.status === 'COMPLETED' ? '0 min' : `~${currentCentre.estWaitMinutes || 24} min`}
+            {booking.status === 'COMPLETED' ? (lang === 'hi' ? '0 मिनट' : '0 min') : `~${currentCentre.estWaitMinutes || 24} ${lang === 'hi' ? 'मिनट' : 'min'}`}
           </p>
         </div>
       </div>
@@ -108,11 +108,11 @@ export const TokenDisplay = ({ booking, onLiveQueueClick }) => {
             </div>
             <div className="flex justify-between">
               <span className="text-agri-text-muted">{lang === 'hi' ? 'अनुमानित वजन' : 'Expected Qty'}:</span>
-              <strong className="font-bold">{booking.expectedQty || 40} Quintals</strong>
+              <strong className="font-bold">{booking.expectedQty || 40} {lang === 'hi' ? 'क्विंटल' : 'Quintals'}</strong>
             </div>
             <div className="flex justify-between">
               <span className="text-agri-text-muted">{lang === 'hi' ? 'काउंटर' : 'Assigned Counter'}:</span>
-              <strong className="font-bold font-mono">{booking.counter || 'Counter 2'}</strong>
+              <strong className="font-bold font-mono">{booking.counter ? (lang === 'hi' ? booking.counter.replace('Counter', 'काउंटर') : booking.counter) : (lang === 'hi' ? 'काउंटर 2' : 'Counter 2')}</strong>
             </div>
             <div className="flex justify-between">
               <span className="text-agri-text-muted">{lang === 'hi' ? 'बुकिंग आईडी' : 'Booking ID'}:</span>

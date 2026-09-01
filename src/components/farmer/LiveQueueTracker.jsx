@@ -3,7 +3,7 @@ import { useDemo } from '../../context/DemoContext';
 import { Clock, CheckCircle2, Navigation, ArrowRight, BellRing } from 'lucide-react';
 
 export const LiveQueueTracker = () => {
-  const { queueItems, activeBooking, lang, speakText, centres } = useDemo();
+  const { queueItems, activeBooking, lang, centres } = useDemo();
   const [showTurnAlert, setShowTurnAlert] = useState(false);
   const [expandedItemId, setExpandedItemId] = useState(null);
   const didAlertRef = useRef(false);
@@ -29,14 +29,6 @@ export const LiveQueueTracker = () => {
         navigator.vibrate([300, 100, 300, 100, 500]);
       }
 
-      // Read it out loud for accessibility if speakText is available
-      if (speakText) {
-        speakText(
-          `आपकी बारी आ गई है! टोकन ${activeBooking?.token}। कृपया ${activeBooking?.counter || 'काउंटर 2'} पर तुरंत जाएं।`,
-          `Your turn has arrived! Token ${activeBooking?.token}. Please go to ${activeBooking?.counter || 'Counter 2'} immediately.`
-        );
-      }
-
       // Auto-dismiss after 12 seconds
       const timer = setTimeout(() => setShowTurnAlert(false), 12000);
       return () => clearTimeout(timer);
@@ -44,7 +36,7 @@ export const LiveQueueTracker = () => {
     if (!isProcessing) {
       didAlertRef.current = false;
     }
-  }, [isProcessing, activeBooking?.token, activeBooking?.counter, speakText]);
+  }, [isProcessing, activeBooking?.token, activeBooking?.counter]);
 
   return (
     <div className="space-y-5 animate-in fade-in duration-300 pb-6 sm:pb-0 font-sans">
@@ -66,16 +58,16 @@ export const LiveQueueTracker = () => {
 
           <div className="bg-[#102e1c] rounded-2xl px-8 py-4 mt-4 border border-agri-gold/40">
             <span className="text-agri-gold text-xs font-bold uppercase block font-sans">
-              {t('काउंटर / Counter', 'Counter')}
+              {t('काउंटर', 'Counter')}
             </span>
             <span className="font-heading text-2xl text-white font-extrabold">
-              {activeBooking?.counter || 'Counter 2'}
+              {activeBooking?.counter ? (lang === 'hi' ? activeBooking.counter.replace('Counter', 'काउंटर') : activeBooking.counter) : (lang === 'hi' ? 'काउंटर 2' : 'Counter 2')}
             </span>
           </div>
 
           <p className="text-agri-ivory/90 text-sm mt-5 max-w-sm leading-relaxed">
             {t(
-              `कृपया तुरंत ${activeBooking?.counter || 'काउंटर 2'} पर फसल तौल के लिए जाएं।`,
+              `कृपया तुरंत ${activeBooking?.counter ? activeBooking.counter.replace('Counter', 'काउंटर') : 'काउंटर 2'} पर फसल तौल के लिए जाएं।`,
               `Proceed immediately to ${activeBooking?.counter || 'Counter 2'} for crop weighment.`
             )}
           </p>
@@ -230,7 +222,7 @@ export const LiveQueueTracker = () => {
           </div>
 
           <span className="text-[11px] font-bold text-agri-green bg-agri-green-soft px-2.5 py-0.5 rounded-full border border-agri-green-border font-sans">
-            Counter 2
+            {lang === 'hi' ? 'काउंटर 2' : 'Counter 2'}
           </span>
         </div>
 

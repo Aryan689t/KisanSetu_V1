@@ -3,7 +3,7 @@ import { useDemo } from '../../context/DemoContext';
 import { CheckCircle2, Download, IndianRupee, HelpCircle, Wheat, MapPin, Building, ReceiptText } from 'lucide-react';
 
 export const FarmerHistory = () => {
-  const { lang, activeBooking, pastHistory: contextPastHistory, speakText } = useDemo();
+  const { lang, activeBooking, pastHistory: contextPastHistory } = useDemo();
   const [showFormulaHelp, setShowFormulaHelp] = useState(false);
   const [expandedId, setExpandedId] = useState(null);
 
@@ -101,7 +101,7 @@ export const FarmerHistory = () => {
           </div>
 
           <span className="text-[11px] font-bold text-agri-gold bg-agri-gold/20 px-2.5 py-1 rounded-lg border border-agri-gold/30 font-sans">
-            Direct Bank Transfer
+            {lang === 'hi' ? 'प्रत्यक्ष बैंक अंतरण (DBT)' : 'Direct Bank Transfer'}
           </span>
         </div>
       </div>
@@ -109,11 +109,7 @@ export const FarmerHistory = () => {
       {/* 2. HOW PAYMENT WAS CALCULATED (COLLAPSIBLE HELP) */}
       <div className="bg-white rounded-xl p-3.5 border border-agri-ivory-muted shadow-sm font-sans">
         <button
-          onClick={() => {
-            const next = !showFormulaHelp;
-            setShowFormulaHelp(next);
-            if (next && speakText) speakText('भुगतान कैसे तय हुआ देखें', 'See how your payment was calculated');
-          }}
+          onClick={() => setShowFormulaHelp(!showFormulaHelp)}
           className="text-xs font-bold text-agri-green hover:text-agri-green-dark flex items-center justify-between w-full touch-target min-h-[44px]"
         >
           <span className="flex items-center space-x-1.5">
@@ -196,17 +192,17 @@ export const FarmerHistory = () => {
                   <div className="divide-y divide-agri-ivory-muted/60 text-xs py-1 font-sans">
                     <div className="py-1.5 flex items-center justify-between">
                       <span className="text-agri-text-muted">{t('कुल वजन', 'Quantity')}</span>
-                      <strong className="font-bold text-agri-text font-sans">{item.actualQty} Quintals</strong>
+                      <strong className="font-bold text-agri-text font-sans">{item.actualQty} {t('क्विंटल', 'Quintals')}</strong>
                     </div>
 
                     <div className="py-1.5 flex items-center justify-between">
                       <span className="text-agri-text-muted">{t('एमएसपी दर (MSP)', 'MSP Rate')}</span>
-                      <strong className="font-bold text-agri-text font-sans">₹{item.ratePerQuintal.toLocaleString()}/Quintal</strong>
+                      <strong className="font-bold text-agri-text font-sans">₹{item.ratePerQuintal.toLocaleString()}/{t('क्विंटल', 'Quintal')}</strong>
                     </div>
 
                     <div className="py-1.5 flex items-center justify-between">
                       <span className="text-agri-text-muted">{t('गुणवत्ता व नमी', 'Quality & Moisture')}</span>
-                      <strong className="font-bold text-agri-text font-sans">{item.qualityGrade || 'Grade A'} • {item.moisturePercent || 11.2}% Moisture</strong>
+                      <strong className="font-bold text-agri-text font-sans">{item.qualityGrade || 'Grade A'} • {item.moisturePercent || 11.2}% {t('नमी', 'Moisture')}</strong>
                     </div>
 
                     <div className="py-1.5 flex items-center justify-between">

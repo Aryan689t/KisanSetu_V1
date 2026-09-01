@@ -28,7 +28,6 @@ export const DemoProvider = ({ children }) => {
 
   // Language & Onboarding State (Strictly English & Hindi)
   const [lang, setLang] = useState('en'); // 'en' | 'hi'
-  const [isAudioActive, setIsAudioActive] = useState(false);
 
   // Onboarding modal control (onboardingStep: 1=language, 2=role, 3=walkthrough)
   const [isOnboardingOpen, setIsOnboardingOpen] = useState(false);
@@ -490,8 +489,6 @@ export const DemoProvider = ({ children }) => {
         markNotificationsRead,
         lang,
         setLang,
-        isAudioActive,
-        setIsAudioActive,
         isOnboardingOpen,
         setIsOnboardingOpen,
         onboardingStep,

@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { useDemo } from '../../context/DemoContext';
-import { X, Wheat, CheckCircle2 } from 'lucide-react';
+import { X, Wheat, CheckCircle2, Calendar } from 'lucide-react';
 
 export const SlotBookingModal = ({ centre, onClose }) => {
-  const { crops, timeSlots, bookSlot } = useDemo();
+  const { crops, timeSlots, bookSlot, lang } = useDemo();
+
+  const t = (hi, en) => (lang === 'hi' ? hi : en);
 
   const [selectedCrop, setSelectedCrop] = useState(crops[0].name);
   const [expectedQty, setExpectedQty] = useState(40);
@@ -29,7 +31,7 @@ export const SlotBookingModal = ({ centre, onClose }) => {
         <div className="p-6 bg-agri-green text-white flex items-center justify-between">
           <div>
             <span className="text-[10px] uppercase font-bold text-agri-gold tracking-widest block">
-              SMART SLOT BOOKING
+              {t('स्मार्ट स्लॉट बुकिंग', 'SMART SLOT BOOKING')}
             </span>
             <h3 className="font-heading text-xl font-bold text-white mt-0.5">
               {centre.name}
@@ -52,7 +54,7 @@ export const SlotBookingModal = ({ centre, onClose }) => {
           {/* Date Picker */}
           <div>
             <label className="block text-xs font-bold text-agri-text mb-1.5 uppercase tracking-wider">
-              Select Procurement Date
+              {t('खरीद की तारीख चुनें', 'Select Procurement Date')}
             </label>
             <div className="grid grid-cols-2 gap-3">
               <button
@@ -65,7 +67,7 @@ export const SlotBookingModal = ({ centre, onClose }) => {
                 }`}
               >
                 <Calendar className="w-3.5 h-3.5" />
-                <span>Today (Aug 29, 2026)</span>
+                <span>{t('आज (29 अगस्त 2026)', 'Today (Aug 29, 2026)')}</span>
               </button>
               <button
                 type="button"
@@ -77,7 +79,7 @@ export const SlotBookingModal = ({ centre, onClose }) => {
                 }`}
               >
                 <Calendar className="w-3.5 h-3.5" />
-                <span>Tomorrow (Aug 30, 2026)</span>
+                <span>{t('कल (30 अगस्त 2026)', 'Tomorrow (Aug 30, 2026)')}</span>
               </button>
             </div>
           </div>
@@ -86,7 +88,7 @@ export const SlotBookingModal = ({ centre, onClose }) => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-bold text-agri-text mb-1.5 uppercase tracking-wider">
-                Select Crop Type
+                {t('फसल प्रकार चुनें', 'Select Crop Type')}
               </label>
               <select
                 value={selectedCrop}
@@ -95,7 +97,7 @@ export const SlotBookingModal = ({ centre, onClose }) => {
               >
                 {crops.map((crop) => (
                   <option key={crop.id} value={crop.name}>
-                    {crop.name} (MSP ₹{crop.mspRate.toLocaleString()}/Qtl)
+                    {crop.name} (MSP ₹{crop.mspRate.toLocaleString()}/{t('क्विंटल', 'Qtl')})
                   </option>
                 ))}
               </select>
@@ -103,7 +105,7 @@ export const SlotBookingModal = ({ centre, onClose }) => {
 
             <div>
               <label className="block text-xs font-bold text-agri-text mb-1.5 uppercase tracking-wider">
-                Expected Harvest (Quintals)
+                {t('अनुमानित वजन (क्विंटल)', 'Expected Harvest (Quintals)')}
               </label>
               <input
                 type="number"
@@ -121,10 +123,10 @@ export const SlotBookingModal = ({ centre, onClose }) => {
           <div>
             <div className="flex items-center justify-between mb-2">
               <label className="block text-xs font-bold text-agri-text uppercase tracking-wider">
-                Available Time Slots
+                {t('उपलब्ध समय स्लॉट', 'Available Time Slots')}
               </label>
               <span className="text-[10px] font-semibold text-agri-green">
-                30-Min Arrival Window Guarantee
+                {t('30-मिनट आगमन गारंटी', '30-Min Arrival Window Guarantee')}
               </span>
             </div>
 
@@ -153,11 +155,11 @@ export const SlotBookingModal = ({ centre, onClose }) => {
                     </div>
                     <span className="text-[10px] flex items-center gap-1 mt-1 font-semibold">
                       {isFull ? (
-                        <span className="text-gray-500">Full</span>
+                        <span className="text-gray-500">{t('फुल', 'Full')}</span>
                       ) : (
                         <>
                           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                          <span>{slot.remaining} slots remaining</span>
+                          <span>{slot.remaining} {t('स्लॉट शेष', 'slots remaining')}</span>
                         </>
                       )}
                     </span>
@@ -170,13 +172,13 @@ export const SlotBookingModal = ({ centre, onClose }) => {
           {/* Estimated Payout Formula Transparency Callout */}
           <div className="p-3 bg-agri-gold-light/20 rounded-xl border border-agri-gold/40 text-xs text-agri-text">
             <div className="flex items-center justify-between font-bold">
-              <span>Estimated Minimum Support Payout:</span>
+              <span>{t('अनुमानित न्यूनतम समर्थन भुगतान (MSP):', 'Estimated Minimum Support Payout:')}</span>
               <span className="text-agri-green-dark font-heading text-sm">
                 ₹{(expectedQty * 2200).toLocaleString()}
               </span>
             </div>
             <p className="text-[11px] text-agri-text-muted mt-1 font-mono">
-              Formula: {expectedQty} Quintals × ₹2,200/Quintal = ₹{(expectedQty * 2200).toLocaleString()}
+              {t('हिसाब:', 'Formula:')} {expectedQty} {t('क्विंटल', 'Quintals')} × ₹2,200/{t('क्विंटल', 'Quintal')} = ₹{(expectedQty * 2200).toLocaleString()}
             </p>
           </div>
 
@@ -187,14 +189,14 @@ export const SlotBookingModal = ({ centre, onClose }) => {
               onClick={onClose}
               className="px-4 py-2 rounded-xl text-xs font-bold text-agri-text-muted hover:bg-agri-ivory"
             >
-              Cancel
+              {t('रद्द करें', 'Cancel')}
             </button>
             <button
               type="submit"
               className="bg-agri-green hover:bg-agri-green-dark text-white font-bold py-2.5 px-6 rounded-xl text-xs transition-all shadow-agri-sm flex items-center space-x-2"
             >
               <Wheat className="w-4 h-4 text-agri-gold" />
-              <span>Confirm & Issue Token Pass</span>
+              <span>{t('पुष्टि करें और टोकन पास जारी करें', 'Confirm & Issue Token Pass')}</span>
             </button>
           </div>
 

@@ -10,8 +10,7 @@ export const FarmerDashboard = () => {
     switchBookingCentre,
     dismissedRerouteAlert,
     setDismissedRerouteAlert,
-    lang,
-    speakText
+    lang
   } = useDemo();
 
   // Derived booked centre vs recommended centre
@@ -68,7 +67,6 @@ export const FarmerDashboard = () => {
             <button
               onClick={() => {
                 switchBookingCentre(recommendedCentre.id);
-                if (speakText) speakText('आपकी बुकिंग बदल दी गई है', 'Your booking has been switched');
               }}
               className="bg-amber-400 hover:bg-amber-300 text-rose-950 font-extrabold text-xs px-4 py-3 rounded-xl shadow-md transition-all flex items-center justify-center space-x-1.5 touch-target min-h-[48px]"
             >
@@ -104,7 +102,7 @@ export const FarmerDashboard = () => {
 
           <div className="flex items-center space-x-2">
             <span className="text-xs text-agri-gold bg-[#102e1c] px-3 py-1.5 rounded-xl border border-agri-gold/20 font-mono">
-              {bookedCentre.name.split(' ')[0]} Yard
+              {bookedCentre.name.split(' ')[0]} {t('मंडी', 'Yard')}
             </span>
             <button
               onClick={() => setFarmerTab('centres')}
@@ -150,14 +148,14 @@ export const FarmerDashboard = () => {
                     <Clock className="w-3.5 h-3.5 text-agri-gold shrink-0" />
                     <span>{t('अनुमानित इंतजार समय:', 'Estimated waiting time:')}</span>
                   </span>
-                  <strong className="text-agri-gold font-bold text-sm font-sans">~{bookedCentre.estWaitMinutes} minutes</strong>
+                  <strong className="text-agri-gold font-bold text-sm font-sans">~{bookedCentre.estWaitMinutes} {t('मिनट', 'minutes')}</strong>
                 </div>
                 <div className="flex items-center justify-between pt-1 border-t border-white/10 text-[11px] text-agri-ivory/80">
                   <span className="flex items-center gap-1">
                     <Navigation className="w-3 h-3 text-agri-gold shrink-0" />
                     <span>{bookedCentre.name}</span>
                   </span>
-                  <span>Slot: <strong className="text-white font-bold">{activeBooking?.slotTime || '11:00 AM – 11:30 AM'}</strong></span>
+                  <span>{t('स्लॉट:', 'Slot:')} <strong className="text-white font-bold">{activeBooking?.slotTime || '11:00 AM – 11:30 AM'}</strong></span>
                 </div>
               </div>
 
@@ -187,7 +185,7 @@ export const FarmerDashboard = () => {
                 </div>
                 <span className="bg-blue-500/30 text-blue-200 text-xs font-bold px-3 py-1 rounded-full border border-blue-400/40 font-sans inline-flex items-center gap-1">
                   <CheckCircle2 className="w-3 h-3 text-blue-300" />
-                  <span>Verified</span>
+                  <span>{t('सत्यापित', 'Verified')}</span>
                 </span>
               </div>
               <button
@@ -214,14 +212,14 @@ export const FarmerDashboard = () => {
                   </span>
                 </div>
                 <span className="bg-agri-green text-white text-xs font-extrabold px-3 py-1 rounded-full animate-bounce font-sans">
-                  {activeBooking?.counter || 'Counter 2'}
+                  {activeBooking?.counter ? (lang === 'hi' ? activeBooking.counter.replace('Counter', 'काउंटर') : activeBooking.counter) : (lang === 'hi' ? 'काउंटर 2' : 'Counter 2')}
                 </span>
               </div>
               <button
                 onClick={() => setFarmerTab('queue')}
                 className="w-full bg-agri-green-dark hover:bg-agri-green text-white font-extrabold text-sm px-5 py-3.5 rounded-xl transition-all flex items-center justify-center space-x-2 shadow-agri-sm touch-target min-h-[48px]"
               >
-                <span>{t(`${activeBooking?.counter || 'काउंटर 2'} पर जाएं`, `Proceed to ${activeBooking?.counter || 'Counter 2'}`)}</span>
+                <span>{t(`${activeBooking?.counter ? activeBooking.counter.replace('Counter', 'काउंटर') : 'काउंटर 2'} पर जाएं`, `Proceed to ${activeBooking?.counter || 'Counter 2'}`)}</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
@@ -236,11 +234,11 @@ export const FarmerDashboard = () => {
                     {isDisbursed ? t('भुगतान प्राप्त हुआ', 'Payment Disbursed') : t('फसल तौल पूरा हुआ', 'Crop Weighed & Logged')}
                   </span>
                   <span className="font-heading font-extrabold text-2xl text-agri-gold font-sans mt-0.5 block">
-                    {activeBooking?.actualQty || 38.5} Quintals
+                    {activeBooking?.actualQty || 38.5} {t('क्विंटल', 'Quintals')}
                   </span>
                 </div>
                 <span className="bg-agri-gold/20 text-agri-gold text-xs font-bold px-3 py-1 rounded-full border border-agri-gold/30 font-sans">
-                  {isDisbursed ? t('भुगतान पूरा', 'Disbursed') : 'DBT Pending'}
+                  {isDisbursed ? t('भुगतान पूरा', 'Disbursed') : t('डीबीटी लंबित', 'DBT Pending')}
                 </span>
               </div>
               <button

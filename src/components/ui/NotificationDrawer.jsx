@@ -2,7 +2,8 @@ import { useDemo } from '../../context/DemoContext';
 import { X, Bell, CheckCircle2, Info, AlertTriangle, Check } from 'lucide-react';
 
 export const NotificationDrawer = ({ isOpen, onClose }) => {
-  const { notifications, markNotificationsRead, activeRole } = useDemo();
+  const { notifications, markNotificationsRead, activeRole, lang } = useDemo();
+  const t = (hi, en) => (lang === 'hi' ? hi : en);
 
   if (!isOpen) return null;
 
@@ -16,7 +17,9 @@ export const NotificationDrawer = ({ isOpen, onClose }) => {
         <div className="p-4 bg-agri-green text-white flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <Bell className="w-5 h-5 text-agri-gold" />
-            <h3 className="font-heading font-semibold text-base">Notifications & SMS Alerts</h3>
+            <h3 className="font-heading font-semibold text-base">
+              {t('सूचनाएं एवं एसएमएस अलर्ट', 'Notifications & SMS Alerts')}
+            </h3>
           </div>
           <button
             onClick={onClose}
@@ -29,14 +32,14 @@ export const NotificationDrawer = ({ isOpen, onClose }) => {
         {/* Action bar */}
         <div className="px-4 py-2 bg-agri-ivory border-b border-agri-ivory-muted flex items-center justify-between text-xs">
           <span className="text-agri-text-muted font-medium">
-            Showing alerts for <strong className="text-agri-green capitalize">{activeRole}</strong>
+            {t('अलर्ट:', 'Showing alerts for')} <strong className="text-agri-green capitalize">{activeRole}</strong>
           </span>
           <button
             onClick={markNotificationsRead}
             className="text-agri-green hover:text-agri-green-dark font-bold flex items-center space-x-1"
           >
             <Check className="w-3.5 h-3.5" />
-            <span>Mark all read</span>
+            <span>{t('सभी पढ़ा हुआ मार्क करें', 'Mark all read')}</span>
           </button>
         </div>
 
@@ -45,7 +48,7 @@ export const NotificationDrawer = ({ isOpen, onClose }) => {
           {filteredNotifs.length === 0 ? (
             <div className="text-center py-12 text-agri-text-muted">
               <Bell className="w-10 h-10 mx-auto text-agri-text-light mb-2 opacity-50" />
-              <p className="text-sm font-medium">No recent notifications</p>
+              <p className="text-sm font-medium">{t('कोई नई सूचना नहीं है', 'No recent notifications')}</p>
             </div>
           ) : (
             filteredNotifs.map((notif) => {
@@ -85,7 +88,7 @@ export const NotificationDrawer = ({ isOpen, onClose }) => {
 
         {/* Footer info */}
         <div className="p-3 bg-agri-ivory border-t border-agri-ivory-muted text-[11px] text-agri-text-muted text-center">
-          📱 SMS Alerts sent to registered Indian mobile (+91 98765 43210)
+          {t('📱 पंजीकृत मोबाइल (+91 98765 43210) पर एसएमएस भेजे गए', '📱 SMS Alerts sent to registered Indian mobile (+91 98765 43210)')}
         </div>
 
       </div>
