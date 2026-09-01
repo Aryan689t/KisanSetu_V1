@@ -58,24 +58,26 @@ export const SlotBookingModal = ({ centre, onClose }) => {
               <button
                 type="button"
                 onClick={() => setSelectedDate('Today (Aug 29, 2026)')}
-                className={`py-2 px-3 rounded-xl border text-xs font-bold text-left transition-all ${
+                className={`py-2 px-3 rounded-xl border text-xs font-bold text-left transition-all flex items-center gap-1.5 ${
                   selectedDate.includes('Today')
                     ? 'border-agri-green bg-agri-green-soft text-agri-green-dark ring-1 ring-agri-green'
                     : 'border-agri-ivory-muted bg-agri-ivory text-agri-text-muted'
                 }`}
               >
-                📅 Today (Aug 29, 2026)
+                <Calendar className="w-3.5 h-3.5" />
+                <span>Today (Aug 29, 2026)</span>
               </button>
               <button
                 type="button"
                 onClick={() => setSelectedDate('Tomorrow (Aug 30, 2026)')}
-                className={`py-2 px-3 rounded-xl border text-xs font-bold text-left transition-all ${
+                className={`py-2 px-3 rounded-xl border text-xs font-bold text-left transition-all flex items-center gap-1.5 ${
                   selectedDate.includes('Tomorrow')
                     ? 'border-agri-green bg-agri-green-soft text-agri-green-dark ring-1 ring-agri-green'
                     : 'border-agri-ivory-muted bg-agri-ivory text-agri-text-muted'
                 }`}
               >
-                📅 Tomorrow (Aug 30, 2026)
+                <Calendar className="w-3.5 h-3.5" />
+                <span>Tomorrow (Aug 30, 2026)</span>
               </button>
             </div>
           </div>
@@ -122,7 +124,7 @@ export const SlotBookingModal = ({ centre, onClose }) => {
                 Available Time Slots
               </label>
               <span className="text-[10px] font-semibold text-agri-green">
-                ⭐ 30-Min Arrival Window Guarantee
+                30-Min Arrival Window Guarantee
               </span>
             </div>
 
@@ -149,8 +151,15 @@ export const SlotBookingModal = ({ centre, onClose }) => {
                       <span className="text-xs font-bold">{slot.time}</span>
                       {isSelected && <CheckCircle2 className="w-4 h-4 text-agri-green" />}
                     </div>
-                    <span className="text-[10px] block mt-1 font-semibold">
-                      {isFull ? '🔒 FULL' : `🟢 ${slot.remaining} slots remaining`}
+                    <span className="text-[10px] flex items-center gap-1 mt-1 font-semibold">
+                      {isFull ? (
+                        <span className="text-gray-500">Full</span>
+                      ) : (
+                        <>
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                          <span>{slot.remaining} slots remaining</span>
+                        </>
+                      )}
                     </span>
                   </button>
                 );

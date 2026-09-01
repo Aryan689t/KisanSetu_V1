@@ -4,7 +4,7 @@ import { StatusBadge } from './StatusBadge';
 import { useDemo } from '../../context/DemoContext';
 
 export const TokenDisplay = ({ booking, onLiveQueueClick }) => {
-  const { centres, lang, speakText } = useDemo();
+  const { centres, lang } = useDemo();
   const [showDetails, setShowDetails] = React.useState(false);
 
   if (!booking) return null;
@@ -23,7 +23,7 @@ export const TokenDisplay = ({ booking, onLiveQueueClick }) => {
           </div>
           <div>
             <h4 className="font-heading font-bold text-xs text-agri-green">
-              🎫 {lang === 'hi' ? 'डिजिटल मंडी पास' : 'Digital Mandi Pass'}
+              {lang === 'hi' ? 'आपका मंडी पास' : 'Your Mandi Pass'}
             </h4>
             <p className="text-[11px] text-agri-text-muted font-sans">
               {booking.farmerName?.replace(' (YOU)', '') || 'Ramesh Singh'}
@@ -35,13 +35,13 @@ export const TokenDisplay = ({ booking, onLiveQueueClick }) => {
 
       {/* Large Token Hero */}
       <div className="text-center bg-[#FAF7EE] rounded-xl p-4 border border-agri-gold/40 space-y-1">
-        <span className="text-[11px] font-bold text-agri-text-muted block">
+        <span className="text-[11px] font-bold text-agri-text-muted block font-sans">
           {lang === 'hi' ? 'आपका टोकन नंबर' : 'Your token number'}
         </span>
         <div className="font-heading font-extrabold text-4xl sm:text-5xl text-agri-green font-mono py-0.5">
           {booking.token}
         </div>
-        <span className="text-xs text-agri-text-muted block font-medium">
+        <span className="text-xs text-agri-text-muted block font-medium font-sans">
           {booking.centreName || currentCentre.name} • Slot {booking.slotTime || '11:00 AM – 11:30 AM'}
         </span>
       </div>
@@ -49,14 +49,14 @@ export const TokenDisplay = ({ booking, onLiveQueueClick }) => {
       {/* Primary Queue Stats */}
       <div className="grid grid-cols-2 gap-3 text-center">
         <div className="bg-agri-ivory/60 p-2.5 rounded-xl border border-agri-ivory-muted">
-          <span className="text-[11px] text-agri-text-muted block">{lang === 'hi' ? 'आगे किसान' : 'Farmers ahead'}</span>
-          <p className="font-heading text-lg font-extrabold text-agri-text font-mono mt-0.5">
+          <span className="text-[11px] text-agri-text-muted block font-sans">{lang === 'hi' ? 'आगे किसान' : 'Farmers ahead'}</span>
+          <p className="font-heading text-lg font-extrabold text-agri-text font-sans mt-0.5">
             {booking.status === 'COMPLETED' ? '0' : (lang === 'hi' ? '3 किसान' : '3 farmers')}
           </p>
         </div>
         <div className="bg-agri-ivory/60 p-2.5 rounded-xl border border-agri-ivory-muted">
-          <span className="text-[11px] text-agri-text-muted block">{lang === 'hi' ? 'अनुमानित समय' : 'Estimated wait'}</span>
-          <p className="font-heading text-lg font-extrabold text-agri-gold-dark font-mono mt-0.5">
+          <span className="text-[11px] text-agri-text-muted block font-sans">{lang === 'hi' ? 'अनुमानित समय' : 'Estimated wait'}</span>
+          <p className="font-heading text-lg font-extrabold text-agri-gold-dark font-sans mt-0.5">
             {booking.status === 'COMPLETED' ? '0 min' : `~${currentCentre.estWaitMinutes || 24} min`}
           </p>
         </div>
@@ -68,11 +68,10 @@ export const TokenDisplay = ({ booking, onLiveQueueClick }) => {
           href={googleMapsUrl}
           target="_blank"
           rel="noopener noreferrer"
-          onClick={() => speakText('दिशा-निर्देश खोले जा रहे हैं', 'Opening directions')}
           className="bg-agri-ivory hover:bg-agri-ivory-muted text-agri-green-dark border border-agri-ivory-muted px-4 py-2.5 rounded-xl text-xs font-bold inline-flex items-center justify-center space-x-1.5 transition-colors touch-target min-h-[44px]"
         >
           <Navigation className="w-4 h-4 text-agri-green" />
-          <span>📍 {lang === 'hi' ? 'रास्ता देखें' : 'Get Directions'}</span>
+          <span>{lang === 'hi' ? 'रास्ता देखें' : 'Get Directions'}</span>
         </a>
 
         {onLiveQueueClick ? (
@@ -81,11 +80,12 @@ export const TokenDisplay = ({ booking, onLiveQueueClick }) => {
             className="bg-agri-green hover:bg-agri-green-dark text-white font-bold px-4 py-2.5 rounded-xl text-xs transition-colors shadow-sm inline-flex items-center justify-center space-x-1.5 touch-target min-h-[44px]"
           >
             <Clock className="w-4 h-4 text-agri-gold" />
-            <span>⏱ {lang === 'hi' ? 'अपनी बारी देखें' : 'Track My Turn'}</span>
+            <span>{lang === 'hi' ? 'अपनी बारी देखें' : 'Track My Turn'}</span>
           </button>
         ) : (
           <div className="bg-agri-green-soft text-agri-green-dark text-xs font-bold px-3 py-2.5 rounded-xl border border-agri-green-border text-center flex items-center justify-center">
-            <span>✓ {lang === 'hi' ? 'पास सक्रिय है' : 'Pass Active'}</span>
+            <CheckCircle2 className="w-3.5 h-3.5 mr-1 text-agri-green" />
+            <span>{lang === 'hi' ? 'पास सक्रिय है' : 'Pass Active'}</span>
           </div>
         )}
       </div>

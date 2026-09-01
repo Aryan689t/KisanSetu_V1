@@ -141,7 +141,6 @@ export const initialQueueItems = [
     token: 'SNP-014',
     farmerName: 'Ramesh Singh (YOU)',
     mobile: '+91 98765 43210',
-    aadhaarLast4: '4821',
     crop: 'Paddy (Grade A)',
     expectedQty: 40,
     actualQty: null, // Will be updated to 38.5 by operator

@@ -173,7 +173,7 @@ export const PaymentSettlement = () => {
                       <Building className="w-3.5 h-3.5 text-agri-green" />
                       <span>SBI ****4092</span>
                     </div>
-                    <span className="text-[10px] text-agri-text-muted">Aadhaar Linked DBT</span>
+                    <span className="text-[10px] text-agri-text-muted">Direct DBT Transfer</span>
                   </td>
 
                   {/* Status */}

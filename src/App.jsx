@@ -3,6 +3,11 @@ import { DemoProvider, useDemo } from './context/DemoContext';
 import { Navbar } from './components/layout/Navbar';
 import { SubtleDemoBar } from './components/layout/SubtleDemoBar';
 import { Footer } from './components/layout/Footer';
+import { LandingPage } from './components/auth/LandingPage';
+import { LanguageSelectionScreen } from './components/auth/LanguageSelectionScreen';
+import { LoginScreen } from './components/auth/LoginScreen';
+import { SignUpScreen } from './components/auth/SignUpScreen';
+import { FarmerOnboarding } from './components/auth/FarmerOnboarding';
 import { FarmerDashboard } from './components/farmer/FarmerDashboard';
 import { CentreDiscovery } from './components/farmer/CentreDiscovery';
 import { LiveQueueTracker } from './components/farmer/LiveQueueTracker';
@@ -31,15 +36,48 @@ const MainContent = () => {
   );
 };
 
+const AppContent = () => {
+  const { isAuthenticated, authScreen } = useDemo();
+
+  // Public / Entry Flow
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen flex flex-col bg-[#FAF7EE] text-agri-text selection:bg-agri-gold/30 font-sans">
+        <SubtleDemoBar />
+        {authScreen === 'landing' && <LandingPage />}
+        {authScreen === 'language' && <LanguageSelectionScreen />}
+        {authScreen === 'login' && <LoginScreen />}
+        {authScreen === 'signup' && <SignUpScreen />}
+        {authScreen === 'onboarding' && <FarmerOnboarding />}
+      </div>
+    );
+  }
+
+  // First-time onboarding screen right after registration
+  if (authScreen === 'onboarding') {
+    return (
+      <div className="min-h-screen flex flex-col bg-[#FAF7EE] text-agri-text selection:bg-agri-gold/30 font-sans">
+        <SubtleDemoBar />
+        <FarmerOnboarding />
+      </div>
+    );
+  }
+
+  // Authenticated Main Application Flow
+  return (
+    <div className="min-h-screen flex flex-col bg-[#FAF7EE] text-agri-text selection:bg-agri-gold/30 font-sans">
+      <SubtleDemoBar />
+      <Navbar />
+      <MainContent />
+      <Footer />
+    </div>
+  );
+};
+
 export default function App() {
   return (
     <DemoProvider>
-      <div className="min-h-screen flex flex-col bg-[#FAF7EE] text-agri-text selection:bg-agri-gold/30 font-sans">
-        <SubtleDemoBar />
-        <Navbar />
-        <MainContent />
-        <Footer />
-      </div>
+      <AppContent />
     </DemoProvider>
   );
 }

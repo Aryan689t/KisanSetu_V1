@@ -80,8 +80,8 @@ export const LiveQueueTable = () => {
                       {item.token}
                     </span>
                     {isTargetDemo && (
-                      <span className="text-[9px] bg-agri-gold text-agri-green-dark font-extrabold px-1.5 py-0.5 rounded font-mono">
-                        DEMO TARGET
+                      <span className="text-[9px] bg-agri-gold text-agri-green-dark font-extrabold px-1.5 py-0.5 rounded font-sans">
+                        DEMO FARMER
                       </span>
                     )}
                   </div>
@@ -193,7 +193,7 @@ export const LiveQueueTable = () => {
                           </span>
                         )}
                       </div>
-                      <span className="text-[10px] text-agri-text-muted font-mono">Aadhaar: ****{item.aadhaarLast4 || '4821'}</span>
+                      <span className="text-[10px] text-agri-text-muted font-mono">{item.mobile || '+91 98765 43210'}</span>
                     </td>
 
                     {/* Crop */}
