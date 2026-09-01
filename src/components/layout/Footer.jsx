@@ -1,4 +1,3 @@
-import React from 'react';
 import { Wheat, ShieldAlert, ExternalLink } from 'lucide-react';
 
 export const Footer = () => {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useDemo } from '../../context/DemoContext';
 import { UserCheck, ShieldCheck, Cpu, RotateCcw, Play, AlertTriangle, CheckCircle2, Clapperboard, ChevronDown, ChevronUp, Settings } from 'lucide-react';
 

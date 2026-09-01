@@ -1,5 +1,4 @@
-import React from 'react';
-import { AlertOctagon, AlertTriangle, Eye, ShieldAlert, ArrowUpRight } from 'lucide-react';
+import { AlertOctagon, Eye, ShieldAlert } from 'lucide-react';
 import { useDemo } from '../../context/DemoContext';
 
 export const RequiresAttention = ({ onSelectCentre }) => {

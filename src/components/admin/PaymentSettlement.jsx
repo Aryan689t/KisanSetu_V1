@@ -1,4 +1,3 @@
-import React from 'react';
 import { useDemo } from '../../context/DemoContext';
 import { ShieldCheck, CheckCircle2, Calculator, Building, FileCheck } from 'lucide-react';
 import { StatusBadge } from '../ui/StatusBadge';

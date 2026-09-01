@@ -1,4 +1,3 @@
-import React from 'react';
 import { useDemo } from '../../context/DemoContext';
 import { Home, MapPin, Ticket, CreditCard } from 'lucide-react';
 

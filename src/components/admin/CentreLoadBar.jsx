@@ -1,4 +1,3 @@
-import React from 'react';
 import { useDemo } from '../../context/DemoContext';
 import { StatusBadge } from '../ui/StatusBadge';
 import { Users, Clock, Scale, Eye, Activity, Building2 } from 'lucide-react';

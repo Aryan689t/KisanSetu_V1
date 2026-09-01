@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState } from 'react';
 import {
   initialCentres,
   initialCrops,
@@ -18,7 +18,34 @@ export const DemoProvider = ({ children }) => {
   // Language & Audio Assistance Accessibility State
   const [lang, setLang] = useState('en'); // 'en' | 'hi'
   const [isAudioActive, setIsAudioActive] = useState(false);
+
+  // Onboarding modal control (onboardingStep: 1=language, 2=role, 3=walkthrough)
   const [isOnboardingOpen, setIsOnboardingOpen] = useState(false);
+  const [onboardingStep, setOnboardingStep] = useState(1);
+  const [onboardingWalkStep, setOnboardingWalkStep] = useState(0);
+
+  // Open the "How it works" tutorial directly (from Help button)
+  const openWalkthrough = () => {
+    setOnboardingStep(3);
+    setOnboardingWalkStep(0);
+    setIsOnboardingOpen(true);
+  };
+
+  // Open full onboarding from the beginning (first visit / settings)
+  const openOnboarding = () => {
+    setOnboardingStep(1);
+    setOnboardingWalkStep(0);
+    setIsOnboardingOpen(true);
+  };
+
+  // First-run visual walkthrough (shown once, remembered across visits via localStorage)
+  const [hasSeenWalkthrough, setHasSeenWalkthrough] = useState(() => {
+    try {
+      return localStorage.getItem('kisansetu_has_seen_walkthrough') === 'true';
+    } catch {
+      return false;
+    }
+  });
 
   // Web Speech Synthesis Helper
   const speakText = (textHi, textEn) => {
@@ -408,7 +435,15 @@ export const DemoProvider = ({ children }) => {
         setIsAudioActive,
         speakText,
         isOnboardingOpen,
-        setIsOnboardingOpen
+        setIsOnboardingOpen,
+        onboardingStep,
+        setOnboardingStep,
+        onboardingWalkStep,
+        setOnboardingWalkStep,
+        openWalkthrough,
+        openOnboarding,
+        hasSeenWalkthrough,
+        setHasSeenWalkthrough
       }}
     >
       {children}

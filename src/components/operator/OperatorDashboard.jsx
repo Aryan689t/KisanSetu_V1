@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useDemo } from '../../context/DemoContext';
-import { Cpu, Users, Scale, Clock, CheckCircle2, PhoneCall, ShieldCheck, UserCheck, AlertCircle, Calculator } from 'lucide-react';
+import { Cpu, Users, Scale, Clock, CheckCircle2, PhoneCall, ShieldCheck, UserCheck } from 'lucide-react';
 import { MetricCard } from '../ui/MetricCard';
 import { LiveQueueTable } from './LiveQueueTable';
 import { ActiveProcurementModal } from './ActiveProcurementModal';

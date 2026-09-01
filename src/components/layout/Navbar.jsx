@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useDemo } from '../../context/DemoContext';
-import { Bell, Wheat, LayoutDashboard, MapPin, Clock, ReceiptText, Volume2, Settings } from 'lucide-react';
+import { Bell, Wheat, LayoutDashboard, MapPin, Clock, ReceiptText, Volume2, Settings, HelpCircle } from 'lucide-react';
 import { NotificationDrawer } from '../ui/NotificationDrawer';
 import { FarmerMobileNav } from './FarmerMobileNav';
 import { OnboardingModal } from '../farmer/OnboardingModal';
@@ -16,7 +16,8 @@ export const Navbar = () => {
     isAudioActive,
     setIsAudioActive,
     speakText,
-    setIsOnboardingOpen
+    openWalkthrough,
+    openOnboarding
   } = useDemo();
   const [isNotifOpen, setIsNotifOpen] = useState(false);
 
@@ -34,7 +35,7 @@ export const Navbar = () => {
             {/* Branding Logo & DoCA Department Badge */}
             <div className="flex items-center space-x-3">
               <div
-                onClick={() => setIsOnboardingOpen(true)}
+                onClick={() => openOnboarding()}
                 className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-agri-gold flex items-center justify-center text-agri-green-dark shadow-sm border border-agri-gold-light/40 shrink-0 cursor-pointer hover:scale-105 transition-transform"
                 title="Open Language & Role Onboarding Settings"
               >
@@ -157,9 +158,19 @@ export const Navbar = () => {
                 <span className="hidden sm:inline">{isAudioActive ? (lang === 'hi' ? 'आवाज चालू' : 'Audio On') : (lang === 'hi' ? 'आवाज' : 'Audio')}</span>
               </button>
 
+              {/* Help / How-it-works walkthrough */}
+              <button
+                onClick={() => { openWalkthrough(); speakText('कैसे काम करता है देखें', 'See how it works'); }}
+                className="p-1.5 sm:px-2.5 sm:py-1 rounded-lg text-xs font-bold flex items-center space-x-1 border transition-all bg-agri-green-dark/60 text-agri-ivory border-white/10 hover:border-white/30"
+                title="How it works"
+              >
+                <HelpCircle className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">{lang === 'hi' ? 'सहायता' : 'Help'}</span>
+              </button>
+
               {/* Settings / Onboarding Trigger */}
               <button
-                onClick={() => setIsOnboardingOpen(true)}
+                onClick={() => openOnboarding()}
                 className="p-1.5 text-agri-ivory hover:text-white rounded-lg hover:bg-agri-green-dark/60 transition-colors"
                 title="Settings & Language Setup"
               >

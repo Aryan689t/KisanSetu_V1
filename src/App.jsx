@@ -1,4 +1,3 @@
-import React from 'react';
 import { DemoProvider, useDemo } from './context/DemoContext';
 import { Navbar } from './components/layout/Navbar';
 import { SubtleDemoBar } from './components/layout/SubtleDemoBar';
