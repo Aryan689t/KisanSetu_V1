@@ -15,25 +15,41 @@ export const SubtleDemoBar = () => {
     setDemoCondition
   } = useDemo();
 
-  const [isMobileExpanded, setIsMobileExpanded] = useState(false);
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   return (
-    <div className="bg-[#143621] text-agri-ivory text-xs py-1.5 px-3 sm:px-6 border-b border-agri-green-dark/80 shadow-inner select-none">
+    <div className="bg-[#102a1a] text-agri-ivory text-xs py-1.5 px-3 sm:px-6 border-b border-agri-green-dark/80 shadow-inner select-none">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-2">
         
-        {/* Compact Mobile Header bar */}
-        <div className="flex items-center justify-between w-full md:w-auto">
-          <div className="flex items-center space-x-1.5 overflow-x-auto scrollbar-none py-0.5">
-            <div className="inline-flex items-center space-x-1 text-amber-400 font-extrabold uppercase text-[10px] tracking-wider pr-2 border-r border-agri-green/40 shrink-0 font-mono">
+        {/* Mobile Header Bar (< md) */}
+        <div className="flex md:hidden items-center justify-between w-full">
+          <div className="flex items-center space-x-1.5 text-amber-400 font-bold text-[11px] font-mono">
+            <Clapperboard className="w-3.5 h-3.5" />
+            <span className="capitalize">{activeRole} View</span>
+          </div>
+
+          <button
+            onClick={() => setIsMobileOpen(!isMobileOpen)}
+            className="px-2.5 py-1 bg-white/10 text-amber-300 rounded-lg text-[11px] font-bold flex items-center space-x-1 border border-white/20 touch-target min-h-[36px]"
+          >
+            <Settings className="w-3.5 h-3.5" />
+            <span>⚙ Demo Controls</span>
+            {isMobileOpen ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+          </button>
+        </div>
+
+        {/* Role Selector (Always on md+, Collapsible on mobile) */}
+        <div className={`${isMobileOpen ? 'flex' : 'hidden md:flex'} flex-col md:flex-row items-stretch md:items-center gap-2 pt-2 md:pt-0`}>
+          <div className="flex items-center space-x-1.5">
+            <div className="hidden md:inline-flex items-center space-x-1 text-amber-400 font-extrabold uppercase text-[10px] tracking-wider pr-2.5 border-r border-agri-green/40 shrink-0 font-mono">
               <Clapperboard className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-              <span className="hidden sm:inline">DEMO CONTROLS</span>
+              <span>DEMO CONTROLS</span>
             </div>
 
-            {/* Role Buttons */}
-            <div className="flex items-center space-x-1 shrink-0">
+            <div className="flex items-center space-x-1 w-full md:w-auto">
               <button
-                onClick={() => setActiveRole('farmer')}
-                className={`px-2 py-1 rounded-lg text-xs transition-all flex items-center space-x-1 touch-target min-h-[36px] ${
+                onClick={() => { setActiveRole('farmer'); setIsMobileOpen(false); }}
+                className={`flex-1 md:flex-none px-2.5 py-1 rounded-lg text-xs transition-all flex items-center justify-center space-x-1 touch-target min-h-[36px] ${
                   activeRole === 'farmer'
                     ? 'bg-agri-gold text-agri-green-dark font-extrabold shadow-sm'
                     : 'text-agri-ivory/70 hover:text-white hover:bg-white/10 font-medium'
@@ -44,8 +60,8 @@ export const SubtleDemoBar = () => {
               </button>
 
               <button
-                onClick={() => setActiveRole('operator')}
-                className={`px-2 py-1 rounded-lg text-xs transition-all flex items-center space-x-1 touch-target min-h-[36px] ${
+                onClick={() => { setActiveRole('operator'); setIsMobileOpen(false); }}
+                className={`flex-1 md:flex-none px-2.5 py-1 rounded-lg text-xs transition-all flex items-center justify-center space-x-1 touch-target min-h-[36px] ${
                   activeRole === 'operator'
                     ? 'bg-agri-gold text-agri-green-dark font-extrabold shadow-sm'
                     : 'text-agri-ivory/70 hover:text-white hover:bg-white/10 font-medium'
@@ -56,8 +72,8 @@ export const SubtleDemoBar = () => {
               </button>
 
               <button
-                onClick={() => setActiveRole('admin')}
-                className={`px-2 py-1 rounded-lg text-xs transition-all flex items-center space-x-1 touch-target min-h-[36px] ${
+                onClick={() => { setActiveRole('admin'); setIsMobileOpen(false); }}
+                className={`flex-1 md:flex-none px-2.5 py-1 rounded-lg text-xs transition-all flex items-center justify-center space-x-1 touch-target min-h-[36px] ${
                   activeRole === 'admin'
                     ? 'bg-agri-gold text-agri-green-dark font-extrabold shadow-sm'
                     : 'text-agri-ivory/70 hover:text-white hover:bg-white/10 font-medium'
@@ -68,23 +84,10 @@ export const SubtleDemoBar = () => {
               </button>
             </div>
           </div>
-
-          {/* Mobile Expand Toggle Button */}
-          <button
-            onClick={() => setIsMobileExpanded(!isMobileExpanded)}
-            className="md:hidden ml-2 px-2 py-1 bg-white/10 text-amber-300 rounded-lg text-[11px] font-bold flex items-center space-x-1 shrink-0 border border-white/20 touch-target min-h-[36px]"
-            aria-label="Toggle Demo Controls"
-          >
-            <Settings className="w-3.5 h-3.5" />
-            <span>Demo Actions</span>
-            {isMobileExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-          </button>
         </div>
 
-        {/* Demo Scenario & Workflow Trigger Actions (Always visible on md+, collapsible on mobile) */}
-        <div className={`${isMobileExpanded ? 'flex' : 'hidden md:flex'} flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-2 pt-2 md:pt-0 border-t md:border-t-0 border-white/10`}>
-          
-          {/* Congestion Simulation Toggle */}
+        {/* Demo Scenario Triggers (Always visible on md+, Collapsible on mobile) */}
+        <div className={`${isMobileOpen ? 'flex' : 'hidden md:flex'} flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-2 pt-2 md:pt-0 border-t md:border-t-0 border-white/10`}>
           <div className="flex items-center space-x-1.5 shrink-0 justify-between sm:justify-start">
             {demoCondition === 'NORMAL' ? (
               <button
@@ -107,7 +110,6 @@ export const SubtleDemoBar = () => {
             )}
           </div>
 
-          {/* Dynamic Workflow Triggers */}
           <div className="flex items-center space-x-1.5 shrink-0 justify-end">
             {activeBooking?.status === 'WAITING' && (
               <button
