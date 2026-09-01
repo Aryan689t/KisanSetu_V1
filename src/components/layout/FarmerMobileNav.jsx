@@ -3,27 +3,27 @@ import { useDemo } from '../../context/DemoContext';
 import { Home, MapPin, Ticket, CreditCard } from 'lucide-react';
 
 export const FarmerMobileNav = () => {
-  const { farmerTab, setFarmerTab } = useDemo();
+  const { farmerTab, setFarmerTab, lang } = useDemo();
 
   const navItems = [
     {
       id: 'dashboard',
-      label: 'Home',
+      label: lang === 'hi' ? 'मुख्य' : 'Home',
       icon: Home
     },
     {
       id: 'centres',
-      label: 'Mandi',
+      label: lang === 'hi' ? 'मंडी' : 'Mandi',
       icon: MapPin
     },
     {
       id: 'queue',
-      label: 'Token',
+      label: lang === 'hi' ? 'टोकन' : 'Token',
       icon: Ticket
     },
     {
       id: 'history',
-      label: 'Payment',
+      label: lang === 'hi' ? 'भुगतान' : 'Payment',
       icon: CreditCard
     }
   ];

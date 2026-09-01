@@ -34,7 +34,7 @@ const MainContent = () => {
 export default function App() {
   return (
     <DemoProvider>
-      <div className="min-h-screen flex flex-col bg-grain-texture text-agri-text selection:bg-agri-gold/30">
+      <div className="min-h-screen flex flex-col bg-[#FAF7EE] text-agri-text selection:bg-agri-gold/30 font-sans">
         <SubtleDemoBar />
         <Navbar />
         <MainContent />
